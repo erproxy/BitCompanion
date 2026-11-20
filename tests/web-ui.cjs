@@ -3,6 +3,14 @@ const fs=require('node:fs/promises');
 const {launchBrowser,baseURL,appURL,isAppURL,catalogName}=require('./browser-runtime.cjs');
 const STORE='bitcraft-companion-v1';
 
+async function assertCatalogIcon(page,area,icon){
+ const selector=area+' .entity-image-fallback use[href$="#'+icon+'"]';
+ await page.waitForFunction(selector=>{
+  const shape=document.querySelector(selector);
+  return shape?.getBBox().width>0 && getComputedStyle(shape.closest('svg')).display!=='none';
+ },selector);
+}
+
 async function settleOffline(page){
  await page.waitForFunction(async()=>{
   const script=document.querySelector('script[type="module"]').src;
@@ -21,6 +29,8 @@ async function settleOffline(page){
   await page.goto(baseURL);
   await page.waitForSelector('body[data-tab="drops"]');
   await settleOffline(page);
+  const {publicData}=await (await page.request.get(appURL('release.json'))).json();
+  if(publicData)await assertCatalogIcon(page,'.hero-info','antler');
   assert.equal(await page.locator('[data-web-update]').isVisible(),false,'No update action before a newer release');
   assert.ok(requests.filter(url=>/\.webp(?:\?|$)/.test(url)).length<30,'First launch never downloads the full image package');
   assert.ok(requests.every(url=>!/^https?:/.test(url)||isAppURL(url)),'Runtime assets remain within the app mount');
@@ -35,6 +45,7 @@ async function settleOffline(page){
   const rarity=page.getByLabel('Редкость в плане');
   const root=page.locator('.recipe-tree-node').first();
   await rarity.waitFor();
+  if(publicData)await assertCatalogIcon(page,'.recipe-target-heading','axe');
   assert.equal(await rarity.inputValue(),'any');
   assert.match(await page.locator('.recipe-target-heading').innerText(),/Emarium Axe[\s\S]*Обычная/);
   assert.match(await root.locator('summary').first().innerText(),/Любая редкость/);
@@ -62,6 +73,7 @@ async function settleOffline(page){
 
   await page.goto(appURL('#/recipes/item%3A518219336'));
   await page.getByLabel('Редкость в плане').waitFor();
+  if(publicData)await assertCatalogIcon(page,'.recipe-target-heading','pickaxe');
   assert.match(await page.locator('.recipe-tree-node > summary').first().textContent(),/Rathium Pickaxe.*Любая редкость/);
   assert.ok(await page.locator('.recipe-steps > li').count()>6);
 
@@ -111,11 +123,13 @@ async function settleOffline(page){
   await page.reload();
   await page.locator('#dungeon-heading').filter({hasText:'Логово аракниров'}).waitFor();
   await page.getByRole('button',{ name: catalogName("Araknir Scroll") }).waitFor();
+  if(publicData)await assertCatalogIcon(page,'.recipe-target-heading','spider');
   await page.goto(appURL('#/world/achievements/106'));
   await page.reload();
   await page.locator('#world-detail').getByRole('heading',{ name: catalogName("Apprentice Miner") }).waitFor();
   await page.locator('#world-detail').getByRole('button',{ name: catalogName("Novice Miner") }).click();
   await page.locator('#world-detail').getByRole('heading',{ name: catalogName("Novice Miner") }).waitFor();
+  if(publicData)await assertCatalogIcon(page,'.world-card-top','medal');
   await context.setOffline(false);
   await page.goto(appURL('#/recipes/item%3A400827528'));
   const enemyMethod=page.locator('#recipe-acquisition [data-recipe-details="enemy:9"]');

@@ -1,9 +1,11 @@
 import { entityImageIndex } from './data/entity-images.js';
 import { assetUrl } from './runtime-config.js';
+import { catalogIcon } from './catalog-icons.js';
 
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sizes=new Set(['sm','md','lg']);
 const imageRoot=assetUrl('assets/bitcraft/');
+const catalogArtwork=assetUrl('icons/catalog.svg');
 export const hasGameImages=Object.keys(entityImageIndex.images).length>0;
 
 export const DROP_ENTITY_KEYS=Object.freeze({
@@ -42,11 +44,13 @@ export function resolveEntityImage(entityOrKey,quantity=1){
 
 /** Decorative illustration; the neighbouring entity name remains the accessible label. */
 export function entityImage(entityOrKey,{size='sm',quantity=1,className=''}={}){
- const key=typeof entityOrKey==='string'?entityOrKey:entityOrKey?.key||'';
+ const entity=typeof entityOrKey==='string'?{key:entityOrKey}:entityOrKey||{};
+ const key=entity.key||'';
  const url=resolveEntityImage(key,quantity);
  const dimension={sm:28,md:44,lg:68}[size]||28;
- const fallback='<svg class="entity-image-fallback" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 9 5v9l-9 5-9-5V8l9-5Z M3 8l9 5 9-5 M12 13v9 M7 5l9 5"/></svg>';
- return `<span class="entity-image entity-image-${sizes.has(size)?size:'sm'}${className?' '+escape(className):''}" data-entity-key="${escape(key)}" aria-hidden="true">${url?`<img src="${escape(url)}" data-entity-image="${escape(key)}" width="${dimension}" height="${dimension}" alt="" aria-hidden="true" loading="lazy" decoding="async">`:''}${fallback}</span>`;
+ const tier=Number.isInteger(entity.tier)&&entity.tier>=1&&entity.tier<=10? " data-entity-tier=\""+entity.tier+"\"":"";
+ const fallback=`<svg class="entity-image-fallback" viewBox="0 0 32 32" focusable="false" aria-hidden="true"><use href="${escape(catalogArtwork)}#${catalogIcon(entity)}"/></svg>`;
+ return `<span class="entity-image entity-image-${sizes.has(size)?size:'sm'}${className?' '+escape(className):''}" data-entity-key="${escape(key)}"${tier} aria-hidden="true">${url?`<img src="${escape(url)}" data-entity-image="${escape(key)}" width="${dimension}" height="${dimension}" alt="" aria-hidden="true" loading="lazy" decoding="async">`:''}${fallback}</span>`;
 }
 
 // The fallback is already in the same fixed-size container. Removing a failed

@@ -7,6 +7,7 @@ import { catalogDropAction } from './catalog-details.js';
 
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const number = formatNumber;
+const dungeonImage = (dungeon, size) => entityImage({ key: dungeon.buildingKey, name: dungeon.name, tag: 'Dungeon' }, { size });
 const patchNotes = 'https://bitcraftonline.com/news/bitcraft-online-1-0-patch-notes';
 
 export function dungeonResults(state, icon) {
@@ -19,7 +20,7 @@ export function dungeonResults(state, icon) {
     <div class="recipe-search-results">${matches.map(dungeon => {
       const active = dungeon.id === selected;
       return `<button type="button" class="recipe-search-item${active ? ' selected' : ''}" data-action="dungeon-target" data-id="${dungeon.id}" aria-pressed="${active}">
-        ${entityImage(dungeon.buildingKey, { size: 'md' })}<span><b>${escape(gameName(dungeon.name, dungeon.title))}</b></span>${icon('arrow')}
+        ${dungeonImage(dungeon, 'md')}<span><b>${escape(gameName(dungeon.name, dungeon.title))}</b></span>${icon('arrow')}
       </button>`;
     }).join('') || `<p class="subtitle">${tr("Ничего не найдено. Попробуй другое название.")}</p>`}</div>`;
 }
@@ -39,7 +40,7 @@ function summaryCard(book, dungeon, roomNames, duration) {
   const difference = dungeon.id === 1785852446 && date === '2026-11-13' &&
     (dungeon.collapseSeconds !== 120 || dungeon.respawnSeconds !== 300);
   return `<section class="card card-pad">
-    <div class="recipe-target-heading">${entityImage(dungeon.buildingKey, { size: 'lg' })}<div>
+    <div class="recipe-target-heading">${dungeonImage(dungeon, 'lg')}<div>
       <h2 id="dungeon-heading">${escape(gameName(dungeon.name, dungeon.title))}</h2>
     </div></div>
     <dl class="recipe-facts dungeon-facts">

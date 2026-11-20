@@ -15,7 +15,7 @@ function matchingBiomes(book, ids) {
 export function biomeLinks(book, ids) {
   const names = matchingBiomes(book, ids);
   return `<span class="biome-links">${names.map(biome => `<button type="button" class="recipe-link biome-link"
-    data-action="world-target" data-mode="biomes" data-id="${biome.id}">${entityImage(`biome:${biome.id}`)}
+    data-action="world-target" data-mode="biomes" data-id="${biome.id}">${entityImage({ key: `biome:${biome.id}`, name: biome.name })}
     <span>${escape(gameName(biome.name, biome.title))}</span></button>`).join('')}</span>`;
 }
 

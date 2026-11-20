@@ -47,7 +47,7 @@ export function dropResults(state, selected, icon) {
       const meta = [sourceTitle(entry), entry.itemTier ? tr("предмет T{0}", entry.itemTier) : '', entry.contribution ? contributionLabel(entry.contribution) : '', gameName(entry.quest?.[1])].filter(Boolean).join(' · ');
       return `${heading}
         <button type="button" class="recipe-search-item drop-result${active ? ' selected' : ''}" data-action="drop-target" data-id="${escape(entry.id)}" aria-pressed="${active}">
-          ${entityImage(entry.itemKey)}<span><b>${escape(gameName(entry.english || entry.name))}</b>
+          ${entityImage(book.entitiesByKey.get(entry.itemKey) || entry.itemKey)}<span><b>${escape(gameName(entry.english || entry.name))}</b>
             <small>${escape(meta)}</small>${location ? `<small>${escape(location)}</small>` : ''}</span>
           <span class="drop-result-chance"><b>${chanceLabel(entry.chance)}</b>${entry.min ? `<small>${tr("на бонус")}</small>` : ''}</span>
         </button>`;

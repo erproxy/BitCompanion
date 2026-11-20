@@ -197,7 +197,7 @@ function stepper(label,key,value){return`<label class="field"><span>${label}</sp
 const notice = text => `<div class="notice">${icon('info')}<p>${text}</p></div>`;
 const saveButton = type => `<button class="primary full" data-action="save" data-type="${type}">${tr("{0} Сохранить план {1}", icon('book'), icon('arrow'))}</button>`;
 function constellation(){return `<svg class="constellation" viewBox="0 0 690 290" aria-hidden="true"><g fill="none"><path d="m320 32 40 27 48-19 59 35 60-17 47 54 78-26 M528 58l-8 72 54-18 30 62"/></g><g><circle cx="320" cy="32" r="2"/><circle cx="360" cy="59" r="2"/><circle cx="408" cy="40" r="2"/><circle cx="467" cy="75" r="2"/><circle cx="528" cy="58" r="2"/><circle cx="574" cy="112" r="2"/><circle cx="652" cy="86" r="2"/></g></svg>`;}
-function hero(title,sub,i='antler',rarity=null,imageKey=null){return `<div class="hero card">${constellation()}<div class="hero-info"><div class="item-emblem">${imageKey?entityImage(imageKey,{size:'lg'}):icon(i)}</div><div><h2>${esc(title)}</h2><p class="subtitle">${esc(sub)}</p>${rarity?`<span class="rarity-chip" style="--rarity:${rarity.color}">${rarityName(rarity.en)}</span>`:''}</div></div></div>`;}
+function hero(title,sub,i='antler',rarity=null,item=null){return `<div class="hero card">${constellation()}<div class="hero-info"><div class="item-emblem">${item?entityImage(item,{size:'lg'}):icon(i)}</div><div><h2>${esc(title)}</h2><p class="subtitle">${esc(sub)}</p>${rarity?`<span class="rarity-chip" style="--rarity:${rarity.color}">${rarityName(rarity.en)}</span>`:''}</div></div></div>`;}
 function dropData(d = state.drop) {
  const preset = DROPS.find(entry => entry.id === d.preset);
  const catalogEntry = d.preset === 'catalog' ? d.catalogEntry : null;
@@ -217,8 +217,12 @@ function dropSettingsView({d, p, name, preset, catalogEntry}) {
    : preset?.id === DROPS[0].id ? 'antler' : 'diamond';
  const quantityLabel = catalogEntry?.min ? tr("Выдач с бонусом") : catalogEntry?.max > 1 ? tr("Удачных выдач") : tr("Нужно предметов");
  const catalogSubtitle = catalogEntry?.itemTier ? tr("Предмет T{0}", catalogEntry.itemTier) : '';
+ const key = catalogEntry?.itemKey ?? DROP_ENTITY_KEYS[preset?.id];
+ const item = key && (getRecipeBook()?.entitiesByKey.get(key) || {
+   key, name: catalogEntry?.english || catalogEntry?.name || preset?.en, tier: catalogEntry?.itemTier ?? preset?.tier
+ });
  return `<section class="card card-pad"><div class="section-title"><h2 id="drop-settings-title" tabindex="-1">${tr("{0}Параметры вылазки", icon('target'))}</h2></div>
-  ${hero(name,catalogEntry ? catalogSubtitle : preset?.tier ? `T${preset.tier}` : preset ? '' : tr("Свой предмет и шанс"),itemIcon,rarity,catalogEntry?.itemKey ?? DROP_ENTITY_KEYS[preset?.id])}
+  ${hero(name,catalogEntry ? catalogSubtitle : preset?.tier ? `T${preset.tier}` : preset ? '' : tr("Свой предмет и шанс"),itemIcon,rarity,item)}
   ${catalogEntry ? '' : dropPresetPicker(d.preset)}
   ${!preset && !catalogEntry ? `<label class="field"><span>${tr("Название предмета")}</span><input data-key="drop.name" value="${esc(name)}" maxlength="140"></label>` : ''}
   <div class="row">${stepper(quantityLabel,'drop.quantity',d.quantity)}

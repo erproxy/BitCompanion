@@ -18,13 +18,13 @@ const modes = {
 };
 
 function entryImage(mode, entry, size) {
-  if (mode === 'biomes') return entityImage(`biome:${entry.id}`, { size });
+  if (mode === 'biomes') return entityImage({ key: `biome:${entry.id}`, name: entry.name }, { size });
   const ownKey = `${mode === 'achievements' ? 'achievement' : 'prospecting'}:${entry.id}`;
   const related = mode === 'achievements'
     ? [...entry.discoveries, ...(entry.skill ? [skillImageKey(entry.skill.id)] : []), ...entry.rewards.map(id => `collectible:${id}`)]
     : [...entry.targetKeys, ...entry.itemsToStart.map(stack => stack.key), ...entry.biomes.map(id => `biome:${id}`)];
-  const key = [ownKey, ...related].find(candidate => resolveEntityImage(candidate)) || ownKey;
-  return entityImage(key, { size, className: 'world-entry-art' });
+  const key = [ownKey, ...related].find(candidate => resolveEntityImage(candidate));
+  return entityImage(key || { key: ownKey }, { size, className: 'world-entry-art' });
 }
 
 function entryLink(mode, entry, fallback) {
@@ -70,7 +70,7 @@ function achievementContent(book, index, entry) {
     const collectible = index.collectibles.get(id);
     const type = collectible?.type;
     const label = type === 'Title' ? tr("Титул") : type === 'Emote' ? tr("Эмоция") : type?.startsWith('Clothes') ? tr("Косметика") : tr("Коллекция");
-    return `<span class="entity-link-content">${entityImage(`collectible:${id}`)}<span><span>${escape(gameName(collectible?.name || `№ ${id}`))}</span>
+    return `<span class="entity-link-content">${entityImage({ key: `collectible:${id}`, type })}<span><span>${escape(gameName(collectible?.name || `№ ${id}`))}</span>
       <small>${label}</small></span></span>`;
   });
   const next = (index.unlocks.get(entry.id) || []).map(achievement => entryLink('achievements', achievement));

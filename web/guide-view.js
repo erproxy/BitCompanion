@@ -9,9 +9,9 @@ const number = value => formatNumber(value, 5);
 const pageSize = 12;
 const rarityOrder = new Map(RARITIES.map(({ en }, order) => [en, order]));
 const modes = {
-  skills: { title: 'Профессии и навыки', tab: 'Профессии', map: 'skillById', icon: 'hammer', sample: 'Mining, Sailing…' },
-  knowledge: { title: 'Знания', tab: 'Знания', map: 'knowledgeById', icon: 'book', sample: 'Training, Player House…' },
-  quests: { title: 'Квесты', tab: 'Квесты', map: 'questById', icon: 'target', sample: 'The Long Haul, Clipper…' }
+  skills: { title: 'Профессии и навыки', tab: 'Профессии', map: 'skillById', sample: 'Mining, Sailing…' },
+  knowledge: { title: 'Знания', tab: 'Знания', map: 'knowledgeById', sample: 'Training, Player House…' },
+  quests: { title: 'Квесты', tab: 'Квесты', map: 'questById', sample: 'The Long Haul, Clipper…' }
 };
 let ui, loading = false, failure = '';
 
@@ -122,8 +122,8 @@ function guideEntryImage(index, mode, entry, size = 'md') {
   }
   if (mode === 'quests') keys = entry.rewards.filter(reward => reward.kind === 'stack').map(reward => reward.key);
   const key = keys.find(candidate => resolveEntityImage(candidate));
-  return key ? entityImage(key, { size, className: 'guide-illustration' })
-    : `<span class="guide-list-icon">${ui.icon(modes[mode].icon)}</span>`;
+  const entryKey = `${mode.replace(/s$/, "")}:${entry.id}`;
+  return entityImage(key || { key: entryKey, name: entry.name }, { size, className: 'guide-illustration' });
 }
 
 function unlockRow(link, level, details, requestedLevel) {

@@ -1,0 +1,358 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <!-- Original illustrations for BitCraft Companion. The SVG use element supplies the metal color. -->
+  <symbol id="axe" viewBox="0 0 32 32">
+    <path d="M20 10l3 2L10 29a2 2 0 0 1-3-2Z" fill="#a87855"/>
+    <path d="M12 4c3 2 6 3 9 2l5 4-4 6-6-3-8 1a11 11 0 0 1 4-10Z" fill="currentColor"/>
+    <path d="m12 7-2 4m11-3 3 2" fill="none" stroke="#eef2df"/>
+  </symbol>
+  <symbol id="saw" viewBox="0 0 32 32">
+    <path d="m4 20 17-14 5 5-14 17-1-4-3 1v-4l-3 1Z" fill="currentColor"/>
+    <path d="m18 6 6-4 6 6-4 6-8-5Zm4 1 4 4 2-3-4-4Z" fill="#a87855" fill-rule="evenodd"/>
+    <path d="m6 19 12-10" stroke="#eef2df"/>
+  </symbol>
+  <symbol id="chisel" viewBox="0 0 32 32">
+    <path d="m14 16 6-5 3 3-5 6-9 8-5-5Z" fill="currentColor"/>
+    <path d="m17 13 8-10a2 2 0 0 1 3 0l2 2a2 2 0 0 1 0 3l-9 9Z" fill="#b07e54"/>
+    <path d="m6 23 4 4m7-7 4-4" fill="none" stroke="#e1ecdf"/>
+  </symbol>
+  <symbol id="pickaxe" viewBox="0 0 32 32">
+    <path d="m16 10 4 3L9 29c-1 1-4-1-4-2Z" fill="#a67a52"/>
+    <path d="M3 10C10 3 24 3 29 17l-5-3-5-4-3 2-4-3Z" fill="currentColor"/>
+    <path d="M8 8c6-3 12-1 16 3" fill="none" stroke="#eef2df"/>
+    <path d="m8 23 3 2" stroke="#e5b77a"/>
+  </symbol>
+  <symbol id="hammer" viewBox="0 0 32 32">
+    <path d="m16 10 4 3L9 29c-1 1-4-1-4-2Z" fill="#a87855"/>
+    <path d="m11 7 6-5 12 9-5 7-5-4-2-4Z" fill="currentColor"/>
+    <path d="m19 5 6 4m-3 4 3 2" fill="none" stroke="#eaf0df"/>
+  </symbol>
+  <symbol id="knife" viewBox="0 0 32 32">
+    <path d="m9 22 4 4-5 4-5-4Z" fill="#ad7950"/>
+    <path d="M9 22 24 4l4-1c3 7-2 15-13 21l-2 2Z" fill="currentColor"/>
+    <path d="M14 22c7-4 11-9 12-14" fill="none" stroke="#eef2df"/>
+  </symbol>
+  <symbol id="bow" viewBox="0 0 32 32">
+    <path d="M8 4c9-3 19 7 20 19l-4 4c1-13-6-21-16-23Z" fill="currentColor"/>
+    <path d="m8 4-3 23 19 0" fill="none" stroke="#94c5bd" stroke-width="1.45"/>
+    <path d="m5 27 18-19-1 5 4-6-6 2m-11 14 1 4m1-7 3 4" fill="none" stroke="#dfb86f" stroke-width="1.55"/>
+  </symbol>
+  <symbol id="scissors" viewBox="0 0 32 32">
+    <path d="M10 19 24 4l1 2-9 17Zm4 0L8 3 7 7l3 15Z" fill="currentColor"/>
+    <circle cx="10" cy="25" r="4" fill="#b795c0"/>
+    <circle cx="21" cy="24" r="4" fill="#b795c0"/>
+    <circle cx="10" cy="25" r="1.85" fill="#172934"/>
+    <circle cx="21" cy="24" r="1.85" fill="#172934"/>
+    <circle cx="13.1" cy="17" r="1.35" fill="#dfb86f"/>
+  </symbol>
+  <symbol id="hoe" viewBox="0 0 32 32">
+    <path d="m19 5 3 2L10 29c-1 1-4-1-4-2Z" fill="#a87855"/>
+    <path d="M18 5c1-3 5-4 9-3l3 6-6 3-3-4Z" fill="currentColor"/>
+    <path d="m25 4 2 4" stroke="#eaf0df"/>
+  </symbol>
+  <symbol id="rod" viewBox="0 0 32 32">
+    <path d="M5 28C9 17 16 3 26 5l1 2C17 5 11 20 8 29Z" fill="currentColor"/>
+    <path d="M26 6v14c0 5-7 6-7 1l1-2" fill="none" stroke="#a0d4dd" stroke-width="1.45"/>
+    <path d="m6 25 4 2-1 3-4-1Z" fill="#a87855"/>
+    <circle cx="12" cy="19" r="2.6" fill="#dfb86f"/>
+  </symbol>
+  <symbol id="machete" viewBox="0 0 32 32">
+    <path d="m10 20 5 4-7 6-4-4Z" fill="#ad7950"/>
+    <path d="M11 21 23 3l6-1c2 10-5 18-14 22Z" fill="currentColor"/>
+    <path d="M15 21c7-4 12-10 12-15" fill="none" stroke="#eef2df"/>
+  </symbol>
+  <symbol id="quill" viewBox="0 0 32 32">
+    <path d="M8 23C5 13 17 4 28 3c0 9-4 15-11 17l-2-1-4 5Z" fill="#97bcab"/>
+    <path d="M5 29 23 8m-9 11 1-5m3 2 5-1" fill="none" stroke="#e6e0b3"/>
+  </symbol>
+  <symbol id="sword" viewBox="0 0 32 32">
+    <path d="M13 19 25 3l4-1-1 6-13 14Z" fill="currentColor"/>
+    <path d="m9 21 3 3-4 6-3-3Z" fill="#a87c57"/>
+    <path d="m9 17 9 8-2 2-9-8Z" fill="#dfb86f"/>
+    <path d="m16 19 10-13" stroke="#ecf1e6"/>
+  </symbol>
+  <symbol id="crossbow" viewBox="0 0 32 32">
+    <path d="m5 25 16-16 4 2L9 29Z" fill="#aa7952"/>
+    <path d="M5 12c7-7 15-8 23-7 1 8-1 16-8 22l1-5c5-5 5-9 5-15-6 0-10 1-16 5Z" fill="currentColor"/>
+    <path d="M7 12c1 6 7 13 13 14" fill="none" stroke="#e7c881" stroke-width="1.4"/>
+    <path d="m10 23 16-15" stroke="#ecf1e6"/>
+  </symbol>
+  <symbol id="daggers" viewBox="0 0 32 32">
+    <path d="m12 18 10-8 6-2-2 6-10 8Zm3 0L8 8l-6-1 1 6 8 10Z" fill="currentColor"/>
+    <path d="m13 20 2 4-6 5-3-3Zm5 1 2-3 7 5-3 4Z" fill="#a87952"/>
+    <path d="m9 19 8 5m0-6 4 6" stroke="#dfb86f" stroke-width="2"/>
+  </symbol>
+  <symbol id="spear" viewBox="0 0 32 32">
+    <path d="m20 9 3 3L7 29a2 2 0 0 1-2-2Z" fill="#a87855"/>
+    <path d="m16 12 7-8 6-2-1 7-7 8Z" fill="currentColor"/>
+    <path d="m20 13 6-8" stroke="#edf2ea"/>
+  </symbol>
+  <symbol id="shield" viewBox="0 0 32 32">
+    <path d="M16 3c4 3 8 4 12 4v8c0 6-5 12-12 14C9 27 4 21 4 15V7c4 0 8-1 12-4Z" fill="currentColor"/>
+    <path d="M16 7c3 2 6 3 8 3v5c0 5-3 8-8 10-5-2-8-5-8-10v-5c2 0 5-1 8-3Z" fill="#4d797d"/>
+    <path d="M16 11v10m-5-5h10" stroke="#dfb86f" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="armor" viewBox="0 0 32 32">
+    <path d="m5 7 7-3 4 5 4-5 7 3 3 8-5 3-2-3 1 12H8l1-12-2 3-5-3Z" fill="currentColor"/>
+    <path d="m11 12 5 4 5-4v10l-5 3-5-3Z" fill="#52757e"/>
+    <path d="m8 9 4 2m8 0 4-2" stroke="#e9efd9"/>
+  </symbol>
+  <symbol id="garment" viewBox="0 0 32 32">
+    <path d="m10 4 6 4 6-4 7 6-4 7-4-2 4 13H7l4-13-4 2-4-7Z" fill="#a9a2c6"/>
+    <path d="M10 5l6 9 6-9m-6 9v13m-6-10h12" fill="none" stroke="#e4ce9a"/>
+  </symbol>
+  <symbol id="helmet" viewBox="0 0 32 32">
+    <path d="M5 19V13A11 11 0 0 1 16 2a11 11 0 0 1 11 11v9l-5 6-5-2v-7h-3v7l-4 2-5-6Z" fill="currentColor"/>
+    <path d="M8 14l8 2 8-2-1 4-7 2-7-2Z" fill="#1a313c"/>
+    <path d="M16 5v7m-8-1 4-4" fill="none" stroke="#e2c894"/>
+  </symbol>
+  <symbol id="boots" viewBox="0 0 32 32">
+    <path d="m8 5 8 1-1 11 9 1 4 5v4H4v-6l4-5Z" fill="#b98b6d"/>
+    <path d="m8 9 7 1m-7 3 6 1m-7 5 7 1M5 24h22" fill="none" stroke="#f4d4a2"/>
+    <path d="M6 27h21" stroke="#637c79" stroke-width="2"/>
+  </symbol>
+  <symbol id="glove" viewBox="0 0 32 32">
+    <path d="M8 29 5 18l2-2 5 5-1-13 3-1 2 8 1-11h3l2 12 2-7 3 1-1 11-4 8Z" fill="#ae9181"/>
+    <path d="m9 23 4-2m3 3 7-1" fill="none" stroke="#e7cda7"/>
+  </symbol>
+  <symbol id="bag" viewBox="0 0 32 32">
+    <path d="m10 6 2-3h8l3 3-3 5h-8Z" fill="#c99765"/>
+    <path d="m11 11-7 8 1 7 5 2h12l5-3 1-6-8-8Z" fill="#ae8562"/>
+    <path d="M11 11h10m-11 8-1 4m11-9 2 4" fill="none" stroke="#e3bd8a" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="parcel" viewBox="0 0 32 32">
+    <path d="m16 3 12 6v15l-12 6-12-6V9Z" fill="#b38760"/>
+    <path d="m4 9 12 6 12-6-12-6Z" fill="#d6ac7d"/>
+    <path d="M16 15v14m-7-17 12-6 3 2-12 6v8l-3-2Z" fill="#e7c990"/>
+  </symbol>
+  <symbol id="chest" viewBox="0 0 32 32">
+    <path d="M3 14 6 7l6-3h11l6 6v15l-6 3H7l-4-4Z" fill="#aa794f"/>
+    <path d="m3 14 6-2h15l5-2v6l-5 2H8l-5 2Z" fill="#e0b975"/>
+    <path d="M10 5v6m12-6v6m-9 8v6m11-7v8" fill="none" stroke="#e4be83"/>
+    <path d="M13 14h6v8h-6Z" fill="#7b9c9e"/>
+  </symbol>
+  <symbol id="ring" viewBox="0 0 32 32">
+    <circle cx="16" cy="19" r="9" fill="#dfb86f"/>
+    <circle cx="16" cy="19" r="5.5" fill="#19313b"/>
+    <path d="m16 2 7 7-7 7-7-7Z" fill="#85c8bb"/>
+    <path d="m16 2 2 7-2 7m-7-7h14" fill="none" stroke="#d5ebdc"/>
+  </symbol>
+  <symbol id="gem" viewBox="0 0 32 32">
+    <path d="m6 9 6-5h9l6 5-11 19Z" fill="#7ac0b3"/>
+    <path d="m6 9 6-5 1 5h7l1-5 6 5-7 5-4 14-3-14Z" fill="#a0d5cd"/>
+    <path d="m6 9 7 5h7l7-5m-14 5 3 14 4-14" fill="none"/>
+    <path d="M3 16v5m-2-2h4m24-11v4m-2-2h4" fill="none" stroke="#dfb86f"/>
+  </symbol>
+  <symbol id="ore" viewBox="0 0 32 32">
+    <path d="m3 21 5-13 8-5 11 6 3 13-8 6H9Z" fill="#82949f"/>
+    <path d="m8 8 8-5 11 6-7 6-9-2Z" fill="#b1c2c7"/>
+    <path d="m11 13 9 2 7-6 3 13-8 6-5-7Z" fill="#577784"/>
+    <path d="m7 20 4-4 3 2-4 6Zm14-2 4-3 2 5-4 3Z" fill="#d8ba83"/>
+  </symbol>
+  <symbol id="ingot" viewBox="0 0 32 32">
+    <path d="m7 10 12-5 8 4 3 10-13 8L2 22Z" fill="currentColor"/>
+    <path d="m7 10 12-5 8 4-13 6Z" fill="#d2dfd9"/>
+    <path d="m14 15 13-6 3 10-13 8Z" fill="currentColor"/>
+    <path d="m6 20 8 3" stroke="#eff3e7"/>
+  </symbol>
+  <symbol id="wood" viewBox="0 0 32 32">
+    <path d="M6 18 21 5c4-2 9 3 8 7L14 27Z" fill="#a87b51"/>
+    <path d="M15 12l10-5m-8 12 9-7" fill="none" stroke="#dcc08a"/>
+    <ellipse cx="10" cy="22" rx="6.4" ry="6" fill="#d5af73"/>
+    <ellipse cx="10" cy="22" rx="3.4" ry="2.9" fill="none" stroke="#93674c"/>
+  </symbol>
+  <symbol id="planks" viewBox="0 0 32 32">
+    <path d="m4 18 17-13 7 4v4L11 27l-7-4Z" fill="#b7885d"/>
+    <path d="m4 18 7 4L28 9l-7-4Z" fill="#d9b584"/>
+    <path d="m8 18 14-10m-9 10 11-8m-11 13 10-8" fill="none" stroke="#936a52"/>
+  </symbol>
+  <symbol id="cloth" viewBox="0 0 32 32">
+    <path d="M7 9a5 5 0 0 1 5-5h12a5 5 0 0 1 4 5v13c-4 2-8 3-13 2l-8-1Z" fill="#969ebf"/>
+    <ellipse cx="9" cy="18" rx="5" ry="7" fill="#c4bdd5"/>
+    <ellipse cx="9" cy="18" rx="2.35" ry="3.4" fill="#52717d"/>
+    <path d="M14 12h12m-11 4h11m-11 4h9" fill="none" stroke="#e1d6d5"/>
+  </symbol>
+  <symbol id="hide" viewBox="0 0 32 32">
+    <path d="m4 5 7 2 4-4 4 4 8-2-3 7 4 4-4 4 3 7-8-2-4 4-4-4-7 2 3-7-4-4 4-4Z" fill="#b2896d"/>
+    <path d="m10 12 5-2 6 2m-10 8 4 2 6-2" fill="none" stroke="#e5bd93"/>
+  </symbol>
+  <symbol id="mushroom" viewBox="0 0 32 32">
+    <path d="M12 14h8l2 11c1 3-12 4-12 0Z" fill="#e2d2af"/>
+    <path d="M3 16c0-5 6-12 13-12 8 0 13 8 13 12-6 2-20 2-26 0Z" fill="#bf7781"/>
+    <circle cx="12" cy="10" r="1.8" fill="#f5dbb8" stroke="none"/>
+    <circle cx="21" cy="12" r="2" fill="#f5dbb8" stroke="none"/>
+  </symbol>
+  <symbol id="leaf" viewBox="0 0 32 32">
+    <path d="M7 24C1 13 12 5 28 3c0 14-8 24-18 22Z" fill="#77ae94"/>
+    <path d="M4 29c7-8 13-15 20-21m-14 14v-6m4 2 6 1m-3-4v-4" fill="none" stroke="#d2dbac" stroke-width="1.4"/>
+  </symbol>
+  <symbol id="grain" viewBox="0 0 32 32">
+    <path d="M9 29c3-8 7-14 15-22m-10 14L8 14m11 1-2-7m-2 15 8-1" fill="none" stroke="#dfb86f" stroke-width="1.8"/>
+    <path d="M24 3c4-1 4 5-3 8-1-3 0-6 3-8ZM10 10c4 1 5 6 3 8-4-1-6-5-3-8ZM17 5c4 2 4 6 2 7-4-2-5-5-2-7ZM26 19c-2 4-6 5-8 4 1-4 5-6 8-4Z" fill="#e5c27f"/>
+  </symbol>
+  <symbol id="meal" viewBox="0 0 32 32">
+    <path d="M4 17h24l-3 7-5 4h-8l-5-4Z" fill="#b1795d"/>
+    <ellipse cx="16" cy="17" rx="12" ry="3.5" fill="#dfba75"/>
+    <path d="M11 14c-4-4 3-5 1-9m5 8c-4-5 3-6 1-10m4 11c-2-3 3-3 2-6" fill="none" stroke="#a2c7b8" stroke-width="1.65"/>
+  </symbol>
+  <symbol id="potion" viewBox="0 0 32 32">
+    <path d="M12 4h8v9l7 9a4 4 0 0 1-3 6H8a4 4 0 0 1-3-6l7-9Z" fill="#7799af"/>
+    <path d="M8 20c6 2 10-3 16 0l3 5-3 3H8l-3-3Z" fill="#ae88bf"/>
+    <path d="M11 3h10v5H11Z" fill="#d4ad7c"/>
+    <path d="m11 17-2 4m13 3h1" fill="none" stroke="#ede0da"/>
+  </symbol>
+  <symbol id="fish" viewBox="0 0 32 32">
+    <path d="m13 10 5-5 4 5-3 3Z" fill="#a8cdbf"/>
+    <path d="M24 13l6-5-1 15-6-5C18 27 7 25 2 16c5-9 16-10 22-3Z" fill="#7cb5bf"/>
+    <path d="M6 20c5 3 11 2 15-3" fill="none" stroke="#d9e4cc"/>
+    <circle cx="8" cy="15" r="1.2" fill="#162831" stroke="none"/>
+  </symbol>
+  <symbol id="shell" viewBox="0 0 32 32">
+    <path d="M5 22C0 13 7 5 16 5s16 8 11 17l-8 5h-6Z" fill="#c1979d"/>
+    <path d="M16 7v17m-5-16 4 16M7 11l7 14M21 8l-4 16m8-13-7 14" fill="none" stroke="#ebd1bd"/>
+    <path d="m12 25 2 3h4l2-3" fill="#a48190"/>
+  </symbol>
+  <symbol id="antler" viewBox="0 0 32 32">
+    <path d="M17 28c0-7 0-12-6-16L6 9 4 4m9 10-3-9m7 17c5-3 7-8 7-13m-4 10 8-1m-4-6 5-6" fill="none" stroke="#e4c39b" stroke-width="2.6"/>
+  </symbol>
+  <symbol id="gear" viewBox="0 0 32 32">
+    <path d="m12 4 2 4h4l2-4 4 2-1 5 3 3 4-1v5l-4 1-3 3 1 4-4 2-2-4h-4l-2 4-4-2 1-4-3-3-4-1v-5l4 1 3-3-1-5Z" fill="#93a6a8"/>
+    <circle cx="16" cy="16" r="5.3" fill="#567986"/>
+    <circle cx="16" cy="16" r="2.2" fill="#dfb86f"/>
+  </symbol>
+  <symbol id="coins" viewBox="0 0 32 32">
+    <path d="M5 15v8c0 6 15 7 15 1V15Z" fill="#ba8950"/>
+    <path d="M17 7v10c0 5 12 5 12 0V7Z" fill="#bf9151"/>
+    <ellipse cx="23" cy="7" rx="6" ry="3.5" fill="#e8c47d"/>
+    <ellipse cx="12.5" cy="15" rx="7.5" ry="4" fill="#e7bc70"/>
+    <path d="M5 19c4 3 11 3 15 0m-15 4c4 2 11 3 15 0" fill="none" stroke="#edcc8c"/>
+  </symbol>
+  <symbol id="scroll" viewBox="0 0 32 32">
+    <path d="M8 5h16l3 3-1 3h-4v13H7L5 21V8Z" fill="#d8b77f"/>
+    <path d="M9 24h10l3-4h6c2 5-2 8-5 8H8a2 2 0 0 1-2-2Z" fill="#b7895c"/>
+    <path d="M10 10h9m-9 4h8m-8 4h7" fill="none" stroke="#6a6d62"/>
+  </symbol>
+  <symbol id="book" viewBox="0 0 32 32">
+    <path d="M4 6c6-2 9-1 12 2 4-3 7-4 12-2v19c-5-2-9-1-12 2-3-3-7-4-12-2Z" fill="#d6c39b"/>
+    <path d="M16 8v19M7 12c3 0 5 0 6 1m-6 3c3 0 5 0 6 1m6-4c2-1 4-1 6-1m-6 5c2-1 4-1 6-1" fill="none" stroke="#6c867b"/>
+  </symbol>
+  <symbol id="map" viewBox="0 0 32 32">
+    <path d="m3 7 8-3 9 3 9-3v21l-9 3-9-3-8 3Z" fill="#cbb78a"/>
+    <path d="M11 4v21m9-18v21" fill="none" stroke="#938a75"/>
+    <path d="m7 20 5-7 5 2 4-5m2-1 3 3m0-3-3 3" fill="none" stroke="#59817b" stroke-width="1.55"/>
+  </symbol>
+  <symbol id="medal" viewBox="0 0 32 32">
+    <path d="m7 3 5 13 5-3-4-10Zm12 0-4 10 5 3 5-13Z" fill="#6cacaa"/>
+    <circle cx="16" cy="21" r="8" fill="#dfb86f"/>
+    <path d="m16 16 2 3 3 1-2 2v3l-3-2-3 2v-3l-2-2 3-1Z" fill="#f4d89c" stroke="#a0794f"/>
+  </symbol>
+  <symbol id="flag" viewBox="0 0 32 32">
+    <path d="M7 4h18v20l-9-5-9 5Z" fill="#8bacc2"/>
+    <path d="M7 4h18m-18 2v23" fill="none" stroke="#dfb86f" stroke-width="1.8"/>
+    <path d="m16 8 2 3 3 2-3 1-2 3-1-3-3-1 3-2Z" fill="#e7c581"/>
+  </symbol>
+  <symbol id="compass" viewBox="0 0 32 32">
+    <circle cx="16" cy="17" r="12" fill="#dfb86f"/>
+    <circle cx="16" cy="17" r="9" fill="#365664"/>
+    <path d="m20 10-2 9-7 5 2-9Z" fill="#b7ded1"/>
+    <path d="m20 10-2 9-5-4Z" fill="#c98381"/>
+    <path d="M14 4V2h4v2" fill="none" stroke="#dfb86f" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="house" viewBox="0 0 32 32">
+    <path d="M6 14h20v13H6Z" fill="#b1947e"/>
+    <path d="m2 15 14-12 14 12-6 2-8-8-9 8Z" fill="#8eb4ad"/>
+    <path d="M13 17h6v10h-6Zm-5 1h3v4H8Zm13 0h3v4h-3Z" fill="#e5c887"/>
+  </symbol>
+  <symbol id="anvil" viewBox="0 0 32 32">
+    <path d="m2 8 28 0-5 6-5 2-2 4 5 3v4H8v-4l5-3-2-5-6-2Z" fill="#8fa8b0"/>
+    <path d="M3 9h25m-18 15h11m-10-10 8 1" fill="none" stroke="#d8e3da"/>
+  </symbol>
+  <symbol id="doorway" viewBox="0 0 32 32">
+    <path d="M4 28V14a12 12 0 0 1 24 0v14h-6V14a6 6 0 0 0-12 0v14Z" fill="#879ba8"/>
+    <path d="M10 28V14a6 6 0 0 1 12 0v14Z" fill="#395465"/>
+    <path d="M16 12v13m-3-8 3-4 3 4m-9-10 3 4m6 0 3-4" fill="none" stroke="#a3d8cc" stroke-width="1.45"/>
+  </symbol>
+  <symbol id="ruin" viewBox="0 0 32 32">
+    <path d="M5 8h6v16H5Zm10 1 6-4v19h-6Zm10 6h4v9h-4ZM3 24h27v4H3Z" fill="#92a4a8"/>
+    <path d="M8 11v10m10-10v8m9-2v5" fill="none" stroke="#d6d4b6"/>
+  </symbol>
+  <symbol id="ship" viewBox="0 0 32 32">
+    <path d="M5 22h24l-5 6H9Z" fill="#b18a6b"/>
+    <path d="M15 3v19" stroke="#e5c282" stroke-width="1.8"/>
+    <path d="m13 5-8 14h8Zm4 2 9 12h-9Z" fill="#a8cfcb"/>
+    <path d="M2 29c4-2 6-2 10 0 3 2 6 2 10 0 4-2 6-2 9 0" fill="none" stroke="#82b9ca"/>
+  </symbol>
+  <symbol id="paw" viewBox="0 0 32 32">
+    <path d="M16 13c4 0 9 5 11 9 2 4-3 7-6 5l-5-2-5 2c-4 2-8-1-6-5 2-4 7-9 11-9Z" fill="#bf9a7f"/>
+    <ellipse cx="5.4" cy="13" rx="3" ry="4" fill="#d4b397" transform="rotate(-23 5.4 13)"/>
+    <ellipse cx="12" cy="7.8" rx="3.1" ry="4.4" fill="#d4b397"/>
+    <ellipse cx="20" cy="7.8" rx="3.1" ry="4.4" fill="#d4b397"/>
+    <ellipse cx="26.6" cy="13" rx="3" ry="4" fill="#d4b397" transform="rotate(23 26.6 13)"/>
+  </symbol>
+  <symbol id="bird" viewBox="0 0 32 32">
+    <path d="m6 17-3-5 8 1c3-4 9-3 11 1l2-6 5-1-3 5-2 8c-2 5-11 6-16 2Z" fill="#a9bf8f"/>
+    <path d="M10 17c4 0 6 1 8 3-4 3-8 1-8-3Z" fill="#6d9c8c"/>
+    <path d="m13 24-3 4h5m3-4 1 4h4" fill="none" stroke="#e1bd7e"/>
+  </symbol>
+  <symbol id="spider" viewBox="0 0 32 32">
+    <path d="m12 13-6-4-3 4m9 3-8-1-2 5m10 0-7 2-2 6m17-15 6-4 3 4m-9 3 8-1 2 5m-10 0 7 2 2 6" fill="none" stroke="#b9a2ce" stroke-width="1.7"/>
+    <ellipse cx="16" cy="12" rx="6" ry="7" fill="#857d9b"/>
+    <circle cx="16" cy="21" r="5" fill="#ab91b6"/>
+    <path d="M14 21h.5m3 0h.5" stroke="#e8c984" stroke-width="1.65"/>
+  </symbol>
+  <symbol id="crab" viewBox="0 0 32 32">
+    <path d="m8 17-5-3 1-5 3 3 3-2 2 5m12 2 5-3-1-5-3 3-3-2-2 5" fill="#c3878d"/>
+    <path d="m8 20-4 2-1 5m7-4-3 5m17-8 4 2 1 5m-7-4 3 5" fill="none" stroke="#e2a7a0" stroke-width="1.7"/>
+    <ellipse cx="16" cy="19" rx="8" ry="6" fill="#c8878b"/>
+    <path d="M13 17v-3m6 3v-3" stroke="#e8cda6" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="mask" viewBox="0 0 32 32">
+    <path d="m5 6 5 4 6-3 6 3 5-4 2 7-3 9-10 6-10-6-3-9Z" fill="#9d8aaf"/>
+    <path d="m7 15 6 1-3 4Zm18 0-6 1 3 4Z" fill="#e6c88f"/>
+    <path d="m12 22 4 2 4-2" fill="none" stroke="#223641"/>
+  </symbol>
+  <symbol id="forest" viewBox="0 0 32 32">
+    <path d="m11 3 7 10h-4l5 8H3l5-8H4Z" fill="#7db397"/>
+    <path d="m23 7 6 10h-3l4 7H16l4-7h-3Z" fill="#519488"/>
+    <path d="M11 21v7m12-4v4m-20 1h26" fill="none" stroke="#d4b77c" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="autumn-forest" viewBox="0 0 32 32">
+    <path d="M7 19C2 19 2 10 7 9c-1-4 3-7 7-4 4-1 7 3 5 6 4 3 1 9-3 9Z" fill="#c69078"/>
+    <path d="M19 22c-4-4-3-9 1-10-1-4 4-7 7-4 4 0 5 7 2 9 0 5-5 7-10 5Z" fill="#d3b175"/>
+    <path d="M11 27V14m0 4-4-4m17 13v-9m0 4 4-4M3 28h26" fill="none" stroke="#ddc08a" stroke-width="1.45"/>
+  </symbol>
+  <symbol id="cave" viewBox="0 0 32 32">
+    <path d="m2 27 3-12 7-9 9-1 7 9 2 13Z" fill="#87939e"/>
+    <path d="m9 27 2-8 4-5 5 1 4 6 1 6Z" fill="#1b3442"/>
+    <path d="m5 18 4-6 7-4 5 1m4 6 2 4" fill="none" stroke="#b5c8c3"/>
+  </symbol>
+  <symbol id="reeds" viewBox="0 0 32 32">
+    <path d="M7 23V9m7 16V5m7 18V10m5 16V13" fill="none" stroke="#97bb9b" stroke-width="1.8"/>
+    <path d="M7 11V7m7 6V6m7 9V9m5 10v-5" fill="none" stroke="#d1ab76" stroke-width="3"/>
+    <path d="M2 25c4-3 7-3 10 0s7 3 10 0 6-3 8-1M5 29c4-2 8 3 13 0 3-2 5-2 8-1" fill="none" stroke="#83b5be" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="mountains" viewBox="0 0 32 32">
+    <path d="m2 27 11-20 6 10 4-7 7 17Z" fill="#728fa4"/>
+    <path d="m13 7 5 9-5-2-5 3Zm10 3 4 9-4-2-3 1Z" fill="#d9e5df"/>
+    <path d="m13 14 2 13m8-10 3 10" fill="none" stroke="#a9c7ca"/>
+  </symbol>
+  <symbol id="grass" viewBox="0 0 32 32">
+    <path d="M2 25c6-8 12-10 18-8 3 1 6 3 10 8l-6 4H7Z" fill="#79a891"/>
+    <path d="M4 21c9 0 17 3 22 6" fill="none" stroke="#b3cf9c"/>
+    <path d="M8 20V9m0 6-4-4m4 6 5-4m11 6V8m0 7 4-4" fill="none" stroke="#d4c389" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="desert" viewBox="0 0 32 32">
+    <circle cx="22" cy="10" r="5" fill="#e2b976"/>
+    <path d="M2 25c4-9 10-12 17-6l11 6v3H2Z" fill="#b98d69"/>
+    <path d="M3 25c6-5 14-5 22 2" fill="none" stroke="#e7c17e"/>
+  </symbol>
+  <symbol id="waves" viewBox="0 0 32 32">
+    <path d="M2 18c4 1 7-4 11-5 4-1 5 3 9 3 3 0 5-2 8-1v10c-5 0-5 3-9 3s-6-3-10-2c-4 1-5 2-9 1Z" fill="#629cad"/>
+    <path d="M2 18c4 1 7-4 11-5 4-1 5 3 9 3 3 0 5-2 8-1M3 22c7 2 8-4 15-1 5 2 6 1 11-1" fill="none" stroke="#b3d7ce" stroke-width="1.55"/>
+    <path d="M14 8a3 3 0 0 1 6 0" fill="none" stroke="#dfb86f" stroke-width="1.55"/>
+  </symbol>
+  <symbol id="volcano" viewBox="0 0 32 32">
+    <path d="m2 28 10-16 4 2 5-2 9 16Z" fill="#8b8290"/>
+    <path d="m13 14 3 4-2 6 4-2 2-8-4 2Z" fill="#d09379"/>
+    <path d="M12 9c-4-3 2-4 0-7m6 7c3-2 1-4 1-6" fill="none" stroke="#dcb894"/>
+  </symbol>
+</svg>

@@ -2,7 +2,7 @@
 
 BitCraft Companion — веб-инструмент для игроков **BitCraft Online**. Он помогает оценить шансы добычи, выбрать стратегию перековки и разложить предмет на материалы и предыдущие тиры. Все расчёты выполняются в браузере.
 
-**Демо после развёртывания** · [erproxy.github.io/BitCompanion](https://erproxy.github.io/BitCompanion/)
+**Веб-версия** · [erproxy.github.io/BitCompanion](https://erproxy.github.io/BitCompanion/)
 
 ## Возможности
 
@@ -31,4 +31,4 @@ BitCraft Companion — веб-инструмент для игроков **BitCr
 - Названия, рецепты и связи взяты из выгрузки сообщества. [BitCraftToolBox GameData](https://github.com/BitCraftToolBox/BitCraft_GameData)
 - Правила крафта и случайных выдач сверялись с опубликованным серверным кодом. [BitCraftPublic](https://github.com/clockworklabs/BitCraftPublic)
 
-BitCraft Companion — независимый фанатский проект по игре Clockwork Labs. Для карточек используются собственные векторные значки. [Исходный код и игровые материалы BitCraft](https://bitcraftonline.com/news/bitcraft-open-sourcing-update)
+BitCraft Companion — независимый фанатский проект по игре Clockwork Labs. В веб-версии работают собственные иллюстрации инструментов, материалов, существ и биомов. [Исходный код и игровые материалы BitCraft](https://bitcraftonline.com/news/bitcraft-open-sourcing-update)
