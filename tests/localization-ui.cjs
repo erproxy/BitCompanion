@@ -29,12 +29,14 @@ const { appURL, assetURL, launchBrowser } = require('./browser-runtime.cjs');
     assert.equal(await language.inputValue(), 'en');
     const { gameLocalization } = await (await page.request.get(appURL('release.json'))).json();
     const official = gameLocalization?.languages ?? [];
-    const options = [
+    const allOptions = [
       ['ru', 'Русский'], ['en', 'English'], ['de', 'Deutsch'], ['es-419', 'Español (Latinoamérica)'],
       ['fr', 'Français'], ['ja', '日本語'], ['pl', 'Polski'], ['pt-BR', 'Português (Brasil)'],
       ['zh-Hans', '简体中文'], ['zh-Hant', '繁體中文']
-    ].filter(([code]) => code === 'ru' || code === 'en' || official.includes(code));
-    assert.deepEqual(await language.locator('option').evaluateAll(options => options.map(option => [option.value, option.text])), options);
+    ];
+    const options = allOptions.filter(([code]) => code === 'ru' || code === 'en' || official.includes(code));
+    assert.deepEqual(await language.locator('option[lang]').evaluateAll(options => options.map(option => [option.value, option.text])), options);
+    assert.equal(await language.locator('option[value="import-game-localization"]').count(), official.length ? 0 : 1);
     const packs = new Map();
     const gameLabel = async (code, name, fallback = name) => {
       if (official.includes(code) && !packs.has(code)) {
@@ -189,7 +191,48 @@ const { appURL, assetURL, launchBrowser } = require('./browser-runtime.cjs');
         assert.ok(await offlinePage.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
       } finally { await offline.close(); }
     }
-    console.log('PASS: language options, system defaults and saved overrides, localized cards and searches, saved attempts and mobile controls.');
+
+    if (!official.length) {
+      const publicContext = await browser.newContext({ locale: 'en-US', viewport: { width: 360, height: 900 } });
+      try {
+        const publicPage = await publicContext.newPage();
+        await publicPage.goto(appURL());
+        await publicPage.waitForFunction(() => Boolean(navigator.serviceWorker.controller), null, { timeout: 60000 });
+        const commit = await publicPage.evaluate(async url => (await import(url)).runtimeConfig.catalogCommit,
+          await assetURL(publicPage, 'runtime-config.js'));
+        const picker = publicPage.locator('#interface-language');
+        await picker.selectOption('import-game-localization');
+        assert.equal(await picker.inputValue(), 'en');
+        const dialog = publicPage.locator('#modal');
+        const submit = dialog.getByRole('button', { name: 'Import', exact: true });
+        const file = dialog.getByLabel('Language pack file');
+        const pack = { formatVersion: 1, steamBuild: '1', commit,
+          languages: Object.fromEntries(allOptions.filter(([code]) => code !== 'en').map(([code, language]) =>
+            [code, { strings: { 'Rangifer Antler': language } }])) };
+        const setPack = value => file.setInputFiles({ name: 'catalog.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(value)) });
+        await setPack({ ...pack, commit: 'another-snapshot' });
+        await submit.click();
+        await dialog.getByRole('alert').filter({ hasText: 'does not match the snapshot' }).waitFor();
+        assert.equal(await picker.locator('option[lang]').count(), 2);
+        await setPack({ ...pack, languages: { de: { strings: { 'Rangifer Antler': '<b>unsafe</b>' } } } });
+        await submit.click();
+        await dialog.getByRole('alert').filter({ hasText: 'Choose the catalog.json file' }).waitFor();
+        await setPack(pack);
+        await submit.click();
+        await dialog.waitFor({ state: 'hidden' });
+        assert.deepEqual(await picker.locator('option[lang]').evaluateAll(options => options.map(option => [option.value, option.text])), allOptions);
+        await picker.selectOption('zh-Hant');
+        await publicPage.getByRole('heading', { name: '繁體中文 (Rangifer Antler)', exact: true }).waitFor();
+        await publicContext.setOffline(true);
+        await publicPage.reload();
+        assert.equal(await picker.inputValue(), 'zh-Hant');
+        await publicPage.getByRole('heading', { name: '繁體中文 (Rangifer Antler)', exact: true }).waitFor();
+        await picker.selectOption('de');
+        await publicPage.getByRole('heading', { name: 'Deutsch (Rangifer Antler)', exact: true }).waitFor();
+        assert.ok(await publicPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+      } finally { await publicContext.close(); }
+    }
+    console.log('PASS: language options, system defaults and saved overrides, localized cards and searches, local-only import, offline and mobile controls.');
   } finally {
     await browser.close();
   }

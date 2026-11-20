@@ -1,12 +1,62 @@
 import { currentLanguage, t } from './i18n.js';
 import { RARITIES } from './domain.js';
 import { catalogLocales, gameLanguageFile } from './catalog-locales.js';
-import { assetUrl, runtimeConfig } from './runtime-config.js';
+import { appBase, assetUrl, runtimeConfig } from './runtime-config.js';
 
 let russian = {};
 let dictionaryVersion = 0;
-const official = new Map();
+let official = new Map();
 const requests = new Map();
+const importCache = 'bitcraft-companion-imported-localizations';
+const importURL = new URL('imported-game-localization.json', appBase).href;
+const importLimit = 24 * 1024 * 1024;
+
+export const canImportCatalogLanguages = Boolean(runtimeConfig.catalogCommit && !runtimeConfig.gameLocalization && globalThis.caches);
+
+function importedDictionaries(pack) {
+  const invalid = () => new Error(t('Выбери файл catalog.json, созданный импортом переводов из Steam.'));
+  if (pack?.formatVersion !== 1 || typeof pack.steamBuild !== 'string' || !/^\d+$/.test(pack.steamBuild)
+    || !pack.languages || typeof pack.languages !== 'object' || Array.isArray(pack.languages)) throw invalid();
+  if (pack.commit !== runtimeConfig.catalogCommit) throw new Error(t('Версия перевода каталога не совпадает со снимком.'));
+  const languages = Object.entries(pack.languages);
+  if (!languages.length) throw invalid();
+  for (const [language, dictionary] of languages) {
+    if (!Object.hasOwn(catalogLocales, language) || !catalogLocales[language].asset
+      || !dictionary?.strings || typeof dictionary.strings !== 'object' || Array.isArray(dictionary.strings)) throw invalid();
+    const values = Object.values(dictionary.strings);
+    if (!values.length || values.some(text => typeof text !== 'string' || !text.trim() || /[<>]/.test(text))) throw invalid();
+  }
+  return new Map(languages.map(([language, dictionary]) => [language, dictionary.strings]));
+}
+
+function useImportedDictionaries(dictionaries) {
+  official = dictionaries;
+  dictionaryVersion++;
+  return [...official.keys()];
+}
+
+export async function restoreCatalogLanguages() {
+  if (!canImportCatalogLanguages) return [];
+  try {
+    const response = await caches.match(importURL, { cacheName: importCache });
+    if (response) return useImportedDictionaries(importedDictionaries(await response.json()));
+  } catch { /* A missing or stale import must not prevent the app from opening. */ }
+  return [];
+}
+
+export async function importCatalogLanguages(file) {
+  if (file.size > importLimit) throw new Error(t('Словарь больше 24 МБ.'));
+  const content = await file.text();
+  let pack;
+  try { pack = JSON.parse(content); }
+  catch { throw new Error(t('Выбери файл catalog.json, созданный импортом переводов из Steam.')); }
+  const dictionaries = importedDictionaries(pack);
+  try {
+    const cache = await caches.open(importCache);
+    await cache.put(importURL, new Response(content, { headers: { 'Content-Type': 'application/json' } }));
+  } catch { throw new Error(t('Браузер не сохранил словарь. Проверь доступ к хранилищу сайта.')); }
+  return useImportedDictionaries(dictionaries);
+}
 
 export function installCatalogLanguage(pack, commit) {
   if (!pack || pack.commit !== commit || !pack.strings || typeof pack.strings !== 'object' || Array.isArray(pack.strings))

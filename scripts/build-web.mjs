@@ -141,14 +141,14 @@ async function verifyPublicOutput(projectRoot, outputRoot, publicBuild) {
   }
 }
 
-async function readGameLocalization(projectRoot, catalog) {
+async function readGameLocalization(projectRoot, catalogCommit) {
   let imported;
   try { imported = JSON.parse(await fs.readFile(path.join(projectRoot, 'data/bitcraft/localization/catalog.json'), 'utf8')); }
   catch (error) { if (error.code === 'ENOENT') return null; throw error; }
   if (imported?.formatVersion !== 1 || !/^\d+$/.test(imported.steamBuild) || !imported.languages
     || !Object.keys(imported.languages).length)
     throw new Error('Invalid local BitCraft translation import.');
-  if (imported.commit !== JSON.parse(catalog.toString()).source.commit) {
+  if (imported.commit !== catalogCommit) {
     console.warn('The local BitCraft translations are from another catalog snapshot. Run data:localizations to refresh them.');
     return null;
   }
@@ -186,7 +186,8 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
   if (publicData) for (const name of catalogFiles) {
     sources.set(name, await fs.readFile(path.join(projectRoot, 'data/public', path.basename(name))));
   }
-  const imported = publicBuild ? null : await readGameLocalization(projectRoot, sources.get(catalogFiles[0]));
+  const catalogCommit = JSON.parse(sources.get(catalogFiles[0]).toString()).source.commit;
+  const imported = publicBuild ? null : await readGameLocalization(projectRoot, catalogCommit);
   if (publicData) await verifyPublicOutput(projectRoot, outputRoot, publicBuild);
   const gameLocalization = imported && {
     commit: imported.commit, steamBuild: imported.steamBuild, languages: Object.keys(imported.languages)
@@ -215,7 +216,7 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
   const release = contentHash.digest('hex').slice(0, 24);
   const releaseBase = `releases/${release}/`;
   const localizationConfig = gameLocalization ? `,gameLocalization:${JSON.stringify(gameLocalization)}` : '';
-  files.set('runtime-config.js', Buffer.from(`// Generated web release configuration.\nexport const runtimeConfig=Object.freeze({release:${JSON.stringify(release)}${localizationConfig},assetBase:new URL('./',import.meta.url).href});\nexport const appBase=new URL('../../',import.meta.url).href;\nexport const assetUrl=path=>new URL(path,runtimeConfig.assetBase).href;\n`));
+  files.set('runtime-config.js', Buffer.from(`// Generated web release configuration.\nexport const runtimeConfig=Object.freeze({release:${JSON.stringify(release)},catalogCommit:${JSON.stringify(catalogCommit)}${localizationConfig},assetBase:new URL('./',import.meta.url).href});\nexport const appBase=new URL('../../',import.meta.url).href;\nexport const assetUrl=path=>new URL(path,runtimeConfig.assetBase).href;\n`));
   const html = rootHtml(files.get('index.html').toString(), releaseBase, imageOrigin);
   files.set('shell.html', Buffer.from(html));
   const presets = new Set(presetImageFiles(sources));

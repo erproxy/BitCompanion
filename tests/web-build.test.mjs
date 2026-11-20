@@ -106,6 +106,7 @@ test('a public build selects public data even when a full local snapshot exists'
     assert.ok(!published.files.some(file => file.path.startsWith('assets/bitcraft/')));
     assert.equal(JSON.parse(await read('data/recipe-catalog.json')).source.commit, 'public-snapshot');
     assert.equal(JSON.parse(await read('data/catalog-ru.json')).commit, 'public-snapshot');
+    assert.match(await read('runtime-config.js'), /catalogCommit:"public-snapshot"/);
     assert.match(await read('data/entity-images.js'), /"images":\{\}/);
 
     await f.build();

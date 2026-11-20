@@ -984,5 +984,14 @@ export const messagesEn = Object.freeze({
   "Нормы или базовое время вариантов редкости различаются; единую цепочку нельзя подставить автоматически.": "Crafting quantities or base times differ by rarity. Choose a specific variant.",
   "Версия перевода каталога не совпадает со снимком.": "The catalog language pack does not match the snapshot.",
   "Перевод BitCraft не загрузился.": "Could not load the BitCraft translation.",
+  "Подключить переводы BitCraft…": "Import BitCraft translations…",
+  "Переводы BitCraft": "BitCraft translations",
+  "Выбери файл catalog.json, созданный импортом переводов из Steam.": "Choose the catalog.json file created by importing translations from Steam.",
+  "Словарь хранится в этом браузере и доступен без сети.": "The language pack stays in this browser and works offline.",
+  "Файл словаря": "Language pack file",
+  "Подключить": "Import",
+  "Переводы BitCraft подключены.": "Imported BitCraft translations.",
+  "Словарь больше 24 МБ.": "The language pack exceeds 24 MB.",
+  "Браузер не сохранил словарь. Проверь доступ к хранилищу сайта.": "The browser could not save the language pack. Check the site's storage settings.",
   "Не удалось загрузить изображения · HTTP {0}. Повторите загрузку.": "Could not download images · HTTP {0}. Try downloading again."
 });

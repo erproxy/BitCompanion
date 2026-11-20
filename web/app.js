@@ -1,5 +1,5 @@
 import { availableLanguages, currentLanguage, decimalSeparator, formatDate, formatNumber, interfaceLanguage, LANGUAGE_KEY, languagePreference, locale, localizeDefault, readLanguagePreference, resolveLanguage, setLanguage, storeLanguagePreference, t as tr } from './i18n.js';
-import { gameName, loadOfficialCatalogLanguage, rarityName } from './catalog-language.js';
+import { canImportCatalogLanguages, catalogSearchKey, gameName, importCatalogLanguages, loadOfficialCatalogLanguage, rarityName, restoreCatalogLanguages } from './catalog-language.js';
 import { catalogLocales } from './catalog-locales.js';
 import { RARITIES, DROPS, probabilityAtLeast, attemptsForConfidence, expectedAttempts, rarityDistribution, planResources } from './domain.js';
 import { recipeDefaults, normalizeRecipeState, configureRecipes, recipesView, recipeResults, recipeSummary, recipeCopyText, retryRecipes, recipeCatalogError, recipeCatalogVersion, getRecipeBook, ensureRecipeCatalog } from './recipes-view.js';
@@ -26,7 +26,8 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num = (n, digits = 2) => Number.isFinite(n) ? formatNumber(n, digits) : '∞';
 const pct = p => p > 0 && p < 1e-8 ? (p*100).toExponential(2).replace('.', decimalSeparator()) : num(p * 100, p > 0 && p < .001 ? 6 : p < .01 ? 4 : 2);
-const gameLanguages = runtimeConfig.gameLocalization?.languages ?? [];
+let gameLanguages = runtimeConfig.gameLocalization?.languages ?? await restoreCatalogLanguages();
+const importLanguageOption = 'import-game-localization';
 let preferredLanguage = readLanguagePreference();
 let languageRequest = 0;
 async function updateLanguage() {
@@ -46,6 +47,7 @@ function languageSelect() {
  const selected = currentLanguage();
  return `<select id="interface-language" class="language-select" aria-label="${tr('Язык')}" title="${tr('Язык')}">
   ${availableLanguages(gameLanguages).map(code => `<option value="${code}" lang="${code}"${code === selected ? ' selected' : ''}>${catalogLocales[code].label}</option>`).join('')}
+  ${canImportCatalogLanguages ? `<option value="${importLanguageOption}">${tr('Подключить переводы BitCraft…')}</option>` : ''}
  </select>`;
 }
 const uid = () => 'u-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
@@ -395,6 +397,17 @@ function journalChecklist(plan){
 
 function showModal(html){$('#modal').innerHTML=html;$('#modal').showModal();}
 function closeModal(){$('#modal').close();}
+function catalogLanguagesDialog(){
+ showModal(`<h2 id="catalog-language-title">${tr('Переводы BitCraft')}</h2>
+  <p>${tr('Выбери файл catalog.json, созданный импортом переводов из Steam.')}
+   ${tr('Словарь хранится в этом браузере и доступен без сети.')}</p>
+  <form id="catalog-language-form" aria-labelledby="catalog-language-title">
+   <label class="field"><span>${tr('Файл словаря')}</span><input id="catalog-language-file" name="pack" type="file" accept=".json,application/json" required></label>
+   <p role="alert" class="warning" data-catalog-language-error hidden></p>
+   <div class="modal-actions"><button type="button" class="secondary" data-action="close-modal">${tr('Отмена')}</button>
+    <button type="submit" class="primary">${tr('Подключить')}</button></div>
+  </form>`);
+}
 function sources(){showModal(`<h2>${tr("Твой полевой помощник")}</h2><p>${tr("Сайт хранит настройки, запасы, рецепты, планы и таймер в браузере. Экспорт JSON создаёт резервную копию. Для первого открытия и подготовки автономного режима нужно подключение к сайту.")}</p><div class="source-list"><div><b>${tr("Контрольные примеры добычи и редкости")}</b><br>${tr("«BitCraft Online 1.0: Rarity and Drops RU». Снимок: 13.11.2026, справочник: 14.11.2026. Конкретные шансы могут измениться на сервере — проверь Obtain / Use в Compendium или укажи свой шанс.")}</div><div><b>${tr("Первоисточники справочника")}</b><br><a href="https://bitcraftonline.com/news/bitcraft-online-1-0-patch-notes" target="_blank" rel="noreferrer">${tr("Официальные патчноуты 1.0 ↗")}</a><br><a href="https://github.com/clockworklabs/BitCraftPublic" target="_blank" rel="noreferrer">${tr("Серверный код Clockwork Labs ↗")}</a><br>${tr("Таблицы BitCraftToolBox: снимок af485cdbbb, указанный в PDF.")}</div><div><b>${tr("Как считаем")}</b><br>${tr("Шанс хотя бы одной удачной выдачи равен 1 − (1 − p)ⁿ. Для нескольких выдач используется биномиальное распределение. Среднее до k удачных выдач равно k / p. При ненулевом риске неудачи результат может округлиться до 100%. В «Добыче» шанс указан для единицы попытки из карточки. Для переменного количества считаются удачные выдачи или выдачи с бонусом. «Добыча» и «Рецепты» используют локальный снимок BitCraftToolBox от 13.11.2026 (af485cdbbb). Время крафта — базовая оценка при скорости ×1 и прогрессе 1 за действие, без критов; сбор и дорога не включены. Раздел «Ресурсы» содержит игровой справочник материалов и источников; собственные рецепты сохранены в режиме «Мои рецепты».")}</div><div><b>${tr("Где хранятся данные")}</b><br>${tr("Сохранения привязаны к адресу сайта и профилю браузера. Очистка данных сайта удаляет записи. В приватном режиме они могут исчезнуть после закрытия окна.")}</div><div id="web-offline-settings">${webSettings()}</div></div><div class="modal-actions"><button class="primary" data-action="close-modal">${tr("Понятно {0}", icon('check'))}</button></div>`);}
 function describePlan(type, data) {
  if(type==='recipeBook')return recipeSummary(data);
@@ -421,13 +434,14 @@ function describePlan(type, data) {
 const journalSummaries=new WeakMap();
 function journalSummary(plan){
  const book=getRecipeBook();
+ const language=catalogSearchKey();
  const previous=journalSummaries.get(plan);
- if(previous?.language===currentLanguage()&&previous.book===book)return previous.summary;
+ if(previous?.language===language&&previous.book===book)return previous.summary;
  let summary=plan;
  try{
   if(plan.type!=='recipeBook'||(book&&(!plan.data.snapshot||plan.data.snapshot===recipeCatalogVersion())))summary=describePlan(plan.type,plan.data);
  }catch{/* Keep the original summary if the plan can't be evaluated. */}
- journalSummaries.set(plan,{language:currentLanguage(),book,summary});
+ journalSummaries.set(plan,{language,book,summary});
  return summary;
 }
 async function savePlan(type){
@@ -470,12 +484,17 @@ async function postChange(key){
 }
 document.addEventListener('change',async e=>{
  if(e.target.id==='interface-language'){
+  if(e.target.value===importLanguageOption){
+   e.target.value=currentLanguage();
+   catalogLanguagesDialog();
+   return;
+  }
   preferredLanguage=languagePreference(e.target.value);
   storeLanguagePreference(preferredLanguage);
   await refreshLanguage();
   return;
  }
- const el=e.target;if(['import-file','guide-search','dungeon-search','world-search','drop-search'].includes(el.id))return;if(storageConflict){toast(tr("Сначала открой актуальные данные или экспортируй текущую копию."));return;}
+ const el=e.target;if(['import-file','catalog-language-file','guide-search','dungeon-search','world-search','drop-search'].includes(el.id))return;if(storageConflict){toast(tr("Сначала открой актуальные данные или экспортируй текущую копию."));return;}
  if(el.hasAttribute('data-plan-progress')){
   if(!el.validity.valid||el.value===''){
    const progress=selectedPlan()?.progress??{};
@@ -734,6 +753,24 @@ document.addEventListener('click',async e=>{
  }catch(error){toast(error.message);}
 });
 document.addEventListener('submit',async e=>{
+ if(e.target.id==='catalog-language-form'){
+  e.preventDefault();
+  const form=e.target,button=form.querySelector('button[type="submit"]'),errorMessage=form.querySelector('[data-catalog-language-error]');
+  if(button.disabled)return;
+  button.disabled=true;
+  errorMessage.hidden=true;
+  try{
+   gameLanguages=await importCatalogLanguages(form.elements.pack.files[0]);
+   if(form.isConnected)closeModal();
+   await refreshLanguage();
+   $('#interface-language')?.focus({preventScroll:true});
+   toast(tr('Переводы BitCraft подключены.'));
+  }catch(error){
+   errorMessage.textContent=error.message;
+   errorMessage.hidden=false;
+  }finally{button.disabled=false;}
+  return;
+ }
  if(!['recipe-form','ingredient-form'].includes(e.target.id))return;e.preventDefault();if(storageConflict)return;
  const data=new FormData(e.target),r=state.resources;
  if(e.target.id==='recipe-form'){const name=String(data.get('name')).trim();if(!name)return;const recipe={id:uid(),name,output:1,seconds:0,ingredients:[]};r.recipes.push(recipe);r.editId=recipe.id;setProductionTarget(r,recipe.id,'targetId');}
