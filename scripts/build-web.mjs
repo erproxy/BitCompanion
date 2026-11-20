@@ -4,12 +4,14 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
 import { allowedBrowserPath, compressible, isHttpsImageOrigin, staticHostHeaders } from './web-headers.mjs';
+import { catalogLocales, gameLanguageFile } from '../web/catalog-locales.js';
 
 const here = fileURLToPath(import.meta.url);
 const defaultProjectRoot = path.resolve(path.dirname(here), '..');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 const catalogFiles = ['data/recipe-catalog.json', 'data/catalog-ru.json'];
 const noGameImages = Buffer.from('export const entityImageIndex = {"images":{}};\n');
+const gameLocalizationDirectory = 'data/game-localization/';
 
 async function listFiles(directory, prefix = '') {
   const files = [];
@@ -124,7 +126,7 @@ async function rejectOutputLinks(projectRoot, outputRoot) {
   }
 }
 
-async function verifyPublicOutput(projectRoot, outputRoot) {
+async function verifyPublicOutput(projectRoot, outputRoot, publicBuild) {
   const releases = path.join(outputRoot, 'releases');
   await rejectOutputLinks(projectRoot, releases);
   let versions;
@@ -134,8 +136,29 @@ async function verifyPublicOutput(projectRoot, outputRoot) {
     const directory = path.join(releases, version);
     await rejectOutputLinks(projectRoot, directory);
     const manifest = JSON.parse(await fs.readFile(path.join(directory, 'asset-manifest.json'), 'utf8'));
-    if (manifest.publicData !== true) throw new Error('Public output contains a local release. Choose a separate output directory.');
+    if (manifest.publicData !== true || (publicBuild && manifest.files.some(file => file.path.startsWith(gameLocalizationDirectory))))
+      throw new Error('Public output contains a local release. Choose a separate output directory.');
   }
+}
+
+async function readGameLocalization(projectRoot, catalog) {
+  let imported;
+  try { imported = JSON.parse(await fs.readFile(path.join(projectRoot, 'data/bitcraft/localization/catalog.json'), 'utf8')); }
+  catch (error) { if (error.code === 'ENOENT') return null; throw error; }
+  if (imported?.formatVersion !== 1 || !/^\d+$/.test(imported.steamBuild) || !imported.languages
+    || !Object.keys(imported.languages).length)
+    throw new Error('Invalid local BitCraft translation import.');
+  if (imported.commit !== JSON.parse(catalog.toString()).source.commit) {
+    console.warn('The local BitCraft translations are from another catalog snapshot. Run data:localizations to refresh them.');
+    return null;
+  }
+  for (const [language, pack] of Object.entries(imported.languages)) {
+    if (!Object.hasOwn(catalogLocales, language) || !catalogLocales[language].asset
+      || !pack?.strings || typeof pack.strings !== 'object' || Array.isArray(pack.strings)
+      || !Object.values(pack.strings).every(value => typeof value === 'string' && value.trim()))
+      throw new Error('Invalid local BitCraft translation: ' + language);
+  }
+  return imported;
 }
 
 export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = path.join(projectRoot, 'web'), publicBuild = false,
@@ -151,17 +174,27 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
     if (existing.some(name => !['releases', 'index.html', 'sw.js', 'release.json', '_headers'].includes(name) && !/^(?:index\.html|sw\.js|release\.json)\.(?:gz|br)$/.test(name)))
       throw new Error('Web output contains unrelated files; choose an empty directory or an existing web build.');
   } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  if (publicData) await verifyPublicOutput(projectRoot, outputRoot);
   for (const name of sourceNames) if (name !== 'sw.js' && !allowedBrowserPath(name)) throw new Error(`Unexpected file in web source: ${name}`);
   for (const required of ['index.html', 'app.js', 'runtime-config.js', 'styles.css', 'icon.svg', 'manifest.webmanifest', 'sw.js'])
     if (!sourceNames.includes(required)) throw new Error(`Missing web source: ${required}`);
   const sources = new Map();
   for (const name of sourceNames) {
+    if (name.startsWith(gameLocalizationDirectory)) continue;
     if (publicData && (catalogFiles.includes(name) || name === 'data/entity-images.js' || name.startsWith('assets/bitcraft/'))) continue;
     sources.set(name, await fs.readFile(path.join(sourceRoot, name)));
   }
   if (publicData) for (const name of catalogFiles) {
     sources.set(name, await fs.readFile(path.join(projectRoot, 'data/public', path.basename(name))));
+  }
+  const imported = publicBuild ? null : await readGameLocalization(projectRoot, sources.get(catalogFiles[0]));
+  if (publicData) await verifyPublicOutput(projectRoot, outputRoot, publicBuild);
+  const gameLocalization = imported && {
+    commit: imported.commit, steamBuild: imported.steamBuild, languages: Object.keys(imported.languages)
+  };
+  if (gameLocalization) for (const language of gameLocalization.languages) {
+    const { strings } = imported.languages[language];
+    const pack = { language, commit: gameLocalization.commit, strings };
+    sources.set(gameLanguageFile(language), Buffer.from(JSON.stringify(pack) + '\n'));
   }
   if (!sources.has('data/entity-images.js')) sources.set('data/entity-images.js', noGameImages);
   const packageInfo = JSON.parse(await fs.readFile(path.join(projectRoot, 'package.json'), 'utf8'));
@@ -177,10 +210,12 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
   contentHash.update(await fs.readFile(here));
   // Hash the browser projection, including the reduced image index, rather than its private source metadata.
   for (const [name, bytes] of files) contentHash.update('\0' + name + '\0' + bytes.length + '\0').update(bytes);
+  if (gameLocalization) contentHash.update('\0gameLocalization\0').update(JSON.stringify(gameLocalization));
   contentHash.update('\0sw.js\0').update(sources.get('sw.js'));
   const release = contentHash.digest('hex').slice(0, 24);
   const releaseBase = `releases/${release}/`;
-  files.set('runtime-config.js', Buffer.from(`// Generated web release configuration.\nexport const runtimeConfig=Object.freeze({release:${JSON.stringify(release)},assetBase:new URL('./',import.meta.url).href});\nexport const appBase=new URL('../../',import.meta.url).href;\nexport const assetUrl=path=>new URL(path,runtimeConfig.assetBase).href;\n`));
+  const localizationConfig = gameLocalization ? `,gameLocalization:${JSON.stringify(gameLocalization)}` : '';
+  files.set('runtime-config.js', Buffer.from(`// Generated web release configuration.\nexport const runtimeConfig=Object.freeze({release:${JSON.stringify(release)}${localizationConfig},assetBase:new URL('./',import.meta.url).href});\nexport const appBase=new URL('../../',import.meta.url).href;\nexport const assetUrl=path=>new URL(path,runtimeConfig.assetBase).href;\n`));
   const html = rootHtml(files.get('index.html').toString(), releaseBase, imageOrigin);
   files.set('shell.html', Buffer.from(html));
   const presets = new Set(presetImageFiles(sources));
@@ -207,7 +242,10 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
     await write(releaseBase + name, bytes, true);
     assets.push({ path: name, bytes: bytes.length, sha256: hash(bytes) });
   }
-  const releaseManifest = { formatVersion: 1, version: packageInfo.version, release, releaseBase, publicData, ...(imageOrigin ? { imageOrigin } : {}), files: assets };
+  const releaseManifest = {
+    formatVersion: 1, version: packageInfo.version, release, releaseBase, publicData,
+    ...(imageOrigin ? { imageOrigin } : {}), ...(gameLocalization ? { gameLocalization } : {}), files: assets
+  };
   await writeFile(path.join(outputRoot, releaseBase, 'asset-manifest.json'), JSON.stringify(releaseManifest, null, 2) + '\n', true, projectRoot);
   const sw = Buffer.from(`// Generated release constants. URLs are relative to the service worker scope.\nconst RELEASE=${JSON.stringify(release)};\nconst RELEASE_BASE=${JSON.stringify(releaseBase)};\nconst CORE=${JSON.stringify(core)};\nconst IMAGE_FILES=${JSON.stringify(imageFiles)};\n` + sources.get('sw.js').toString());
   // Immutable release resources are complete before the mutable entry points change.

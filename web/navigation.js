@@ -47,6 +47,7 @@ export function parseRoute(hash) {
       if (parts.length > 2 || (parts.length === 2 && !positiveNumber(parts[1]))) return null;
       return {tab,id:Number(parts[1] || 0)};
     }
+    if (tab === 'journal' && parts.length === 2 && parts[1] === 'checklist') return {tab,checklist:true};
     return parts.length === 1 ? {tab} : null;
   } catch { return null; }
 }
@@ -72,10 +73,11 @@ export function routeForState(state) {
     if (positiveNumber(id)) route += '/' + id;
   }
   if (state.tab === 'dungeons' && positiveNumber(state.dungeons?.id)) route += '/' + state.dungeons.id;
+  if (state.tab === 'journal' && state.journal?.view === 'checklist') route += '/checklist';
   return route;
 }
 
-export function applyRoute(state, route) {
+export function applyRoute(state, route, historyState) {
   if (!route) return;
   state.tab = route.tab;
   if (route.tab === 'recipeBook') setProductionTarget(state.recipeBook,route.targetKey);
@@ -93,4 +95,9 @@ export function applyRoute(state, route) {
     state.world = {...previous,id:route.id,page:previous.id===route.id?previous.page:-1};
   }
   if (route.tab === 'dungeons') state.dungeons = normalizeDungeonState({...state.dungeons,id:route.id});
+  if (route.tab === 'journal') {
+    state.journal ??= { id: '' };
+    state.journal.view = route.checklist ? 'checklist' : 'list';
+    if (route.checklist && typeof historyState?.journalPlanId === 'string') state.journal.id = historyState.journalPlanId;
+  }
 }

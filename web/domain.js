@@ -185,7 +185,7 @@ export function rarityDistribution(startRarityIndex, startTier, targetTier) {
  * A shared stock pool consumes original inventory and reuses batch surplus once.
  * Ingredient ids matching a recipe id are crafted recursively.
  */
-export function planResources(recipes, targetId, targetAmount, inventory = {}) {
+export function planResources(recipes, targetId, targetAmount, inventory = {}, { includeTree = false } = {}) {
   if (!Array.isArray(recipes)) throw new TypeError(tr("Рецепты должны быть массивом."));
   finite(targetAmount, tr("Количество"));
   const book = new Map();
@@ -226,6 +226,7 @@ export function planResources(recipes, targetId, targetAmount, inventory = {}) {
   checkCycles(targetId);
 
   const raw = new Map(), steps = new Map(), used = new Map();
+  const task = (id, required, missing) => ({ key: id, name: label.get(id) || id, required, missing, batches: 0, produced: 0, children: [] });
   function consume(id, required) {
     if (required === 0) return;
     if (!Number.isFinite(required)) throw new RangeError(tr("Количество ресурсов слишком велико."));
@@ -235,19 +236,24 @@ export function planResources(recipes, targetId, targetAmount, inventory = {}) {
     const originalAvailable = (original.get(id) || 0) - (used.get(id) || 0);
     used.set(id, (used.get(id) || 0) + Math.min(taken, Math.max(0, originalAvailable)));
     const missing = Math.max(0, required - taken);
+    const node = includeTree ? task(id, required, missing) : undefined;
     if (!book.has(id)) {
       raw.set(id, (raw.get(id) || 0) + required);
-      return;
+      return node;
     }
-    if (missing === 0) return;
+    if (missing === 0) return node;
     const recipe = book.get(id);
     // Tolerate the tiny floating point residue produced by decimal ingredients.
     const ratio = missing / recipe.output;
     const roundingTolerance = Math.min(1e-8, Number.EPSILON * 4 * Math.max(1, ratio));
     const batches = Math.max(1, Math.ceil(ratio - roundingTolerance));
     if (!Number.isSafeInteger(batches)) throw new RangeError(tr("Слишком много операций крафта."));
-    for (const ingredient of recipe.ingredients) consume(ingredient.id, ingredient.amount * batches);
+    for (const ingredient of recipe.ingredients) {
+      const child = consume(ingredient.id, ingredient.amount * batches);
+      if (child) node.children.push(child);
+    }
     const produced = recipe.output * batches;
+    if (node) Object.assign(node, { batches, produced });
     stock.set(id, (stock.get(id) || 0) + Math.max(0, produced - missing));
     const previous = steps.get(id) || { id, name: recipe.name || id, batches: 0, produced: 0, seconds: 0 };
     previous.batches += batches;
@@ -255,8 +261,9 @@ export function planResources(recipes, targetId, targetAmount, inventory = {}) {
     previous.seconds += recipe.seconds * batches;
     if (!Number.isFinite(previous.produced) || !Number.isFinite(previous.seconds)) throw new RangeError(tr("Результат слишком велик."));
     steps.set(id, previous);
+    return node;
   }
-  consume(targetId, targetAmount);
+  const tree = consume(targetId, targetAmount);
   const materials = [...raw].map(([id, needed]) => ({
     id, name: label.get(id) || id, needed,
     owned: original.get(id) || 0,
@@ -271,6 +278,7 @@ export function planResources(recipes, targetId, targetAmount, inventory = {}) {
     batches: target?.batches || 0,
     produced: target?.produced || 0,
     stockUsed: [...used].filter(([, amount]) => amount > 0).map(([id, amount]) => ({ id, name: label.get(id) || id, amount })),
-    surplus: Object.fromEntries([...stock].filter(([, amount]) => amount > 1e-10))
+    surplus: Object.fromEntries([...stock].filter(([, amount]) => amount > 1e-10)),
+    ...(includeTree ? { tree: tree ?? task(targetId, 0, 0) } : {})
   };
 }

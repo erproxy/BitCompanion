@@ -24,7 +24,7 @@ const { launchBrowser, baseURL, appURL, catalogName } = require('./browser-runti
     assert.equal(await results.getByRole('button').count(), 1);
     await result(208697589).focus();
     await result(208697589).press('Enter');
-    assert.equal(await heading.textContent(), 'Арсенал Искателей звёзд (Starseeker Armory)');
+    assert.match(await heading.textContent(), catalogName('Starseeker Armory'));
     assert.equal(await page.evaluate(() => document.activeElement.id), 'dungeon-detail');
     assert.equal(await page.locator('.dungeon-route > li').count(), 7);
     await search.fill('запись, которой нет');
@@ -42,7 +42,7 @@ const { launchBrowser, baseURL, appURL, catalogName } = require('./browser-runti
     if (isWeb) assert.match(page.url(), /#\/resources\/creatures\/enemy%3A59$/);
     await page.locator('.resource-sources').getByText('Награды за вклад в данжах', { exact: false }).click();
     await page.locator('.resource-sources [data-action="dungeon-target"][data-id="853770752"]').click();
-    assert.equal(await heading.textContent(), 'Заброшенный аванпост Бессмертных (Abandoned Immortal Outpost)');
+    assert.match(await heading.textContent(), catalogName('Abandoned Immortal Outpost'));
 
     await select(1785852446);
     assert.match(await page.locator('.dungeon-facts').innerText(), /1 мин[\s\S]*3 мин/);
@@ -54,18 +54,18 @@ const { launchBrowser, baseURL, appURL, catalogName } = require('./browser-runti
     const dungeonSources = page.locator('#recipe-acquisition').getByText('Получить в данжах', { exact: false });
     await dungeonSources.click();
     await page.locator('#recipe-acquisition [data-action="dungeon-target"][data-id="1785852446"]').click();
-    assert.equal(await heading.textContent(), 'Данж гигантского скитча (Giant Skitch Dungeon)');
+    assert.match(await heading.textContent(), catalogName('Giant Skitch Dungeon'));
 
     if (isWeb) {
       assert.match(page.url(), /#\/dungeons\/1785852446$/);
       await page.goBack();
       await page.locator('.recipe-target-heading h2').filter({ hasText: 'Ancient Skitch Shell' }).waitFor();
       await page.goForward();
-      await heading.filter({ hasText: 'Данж гигантского скитча' }).waitFor();
+      await heading.filter({ hasText: 'Giant Skitch Dungeon' }).waitFor();
       await page.goto(appURL('#/dungeons/9000'));
       await page.getByRole('heading', { name: 'Данж не найден в снимке' }).waitFor();
       await page.goto(appURL('#/dungeons/1785852446'));
-      await heading.filter({ hasText: 'Данж гигантского скитча' }).waitFor();
+      await heading.filter({ hasText: 'Giant Skitch Dungeon' }).waitFor();
     }
 
     for (const [width, height] of [[1280, 900], [760, 1100], [530, 1100], [390, 844], [360, 800]]) {
@@ -79,7 +79,7 @@ const { launchBrowser, baseURL, appURL, catalogName } = require('./browser-runti
     await page.locator('#import-file').setInputFiles({ name: 'old-v1.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(oldExport)) });
     await page.waitForSelector('body[data-tab="drops"]');
     await tab.click();
-    await heading.filter({ hasText: 'Арсенал Искателей звёзд' }).waitFor();
+    await heading.filter({ hasText: 'Starseeker Armory' }).waitFor();
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('bitcraft-companion-v1')));
     assert.equal(stored.recipeBook.inventory['item:1'], 12);
     assert.deepEqual(stored.dungeons, { id: 0, search: '' });

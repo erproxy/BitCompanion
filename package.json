@@ -1,15 +1,16 @@
 {
   "name": "bitcraft-companion",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "Static BitCraft Online website with offline support",
   "scripts": {
-    "test": "node --test tests/domain.test.mjs tests/recipe-domain.test.mjs tests/resource-domain.test.mjs tests/dungeon-domain.test.mjs tests/localization.test.mjs tests/navigation.test.mjs tests/state-storage.test.mjs tests/web-build.test.mjs",
+    "test": "node --test tests/domain.test.mjs tests/recipe-domain.test.mjs tests/resource-domain.test.mjs tests/dungeon-domain.test.mjs tests/plan-checklist.test.mjs tests/localization.test.mjs tests/navigation.test.mjs tests/state-storage.test.mjs tests/web-build.test.mjs",
     "test:full": "node --test tests/*.test.mjs",
     "data:verify": "node scripts/verify-bitcraft-data.mjs",
     "data:catalog": "node scripts/build-recipe-catalog.mjs",
     "data:catalog:check": "node scripts/build-recipe-catalog.mjs --check",
+    "data:localizations": "node scripts/import-game-localizations.mjs",
     "data:icons:verify": "node scripts/verify-bitcraft-icons.mjs",
     "data:images": "node scripts/build-entity-images.mjs",
     "data:images:check": "node scripts/build-entity-images.mjs --check",

@@ -16,6 +16,13 @@ const EPSILON = 1e-9;
 const MANUFACTURING = new Set(['crafting', 'conversion']);
 const RARITY_ORDER = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic'];
 
+export function productionBatches(required, output) {
+  if (required === 0) return 0;
+  const ratio = required / output;
+  const tolerance = Math.min(1e-8, Number.EPSILON * 8 * Math.max(1, ratio));
+  return Math.max(1, Math.ceil(ratio - tolerance));
+}
+
 function amount(value, label, minimum = 0) {
   if (typeof value !== 'number' || !Number.isFinite(value) || value < minimum) {
     throw new RangeError(tr("{0}: требуется конечное число не меньше {1}.", label, minimum));
@@ -258,9 +265,7 @@ export function planProduction(book, targetKey, quantity, options = {}) {
       issue('cycle', key, tr("Обнаружен цикл. Выберите другой способ или отметьте этот предмет как внешний ресурс."), recipe.key);
       return leaf(node, 'cycle');
     }
-    const ratio = node.missing / choice.output;
-    const tolerance = Math.min(1e-8, Number.EPSILON * 8 * Math.max(1, ratio));
-    const batches = Math.max(1, Math.ceil(ratio - tolerance));
+    const batches = productionBatches(node.missing, choice.output);
     if (!Number.isSafeInteger(batches)) throw new RangeError(tr("Слишком много производственных операций."));
     const ingredients = aggregate(recipe.ingredients || [], normalize);
     const nextPath = new Set(path); nextPath.add(key);

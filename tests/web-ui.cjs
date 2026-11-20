@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs/promises');
-const {launchBrowser,baseURL,appURL,isAppURL,catalogName}=require('./browser-runtime.cjs');
+const {launchBrowser,baseURL,appURL,assetURL,isAppURL,catalogName}=require('./browser-runtime.cjs');
 const STORE='bitcraft-companion-v1';
 
 async function assertCatalogIcon(page,area,icon){
@@ -29,7 +29,9 @@ async function settleOffline(page){
   await page.goto(baseURL);
   await page.waitForSelector('body[data-tab="drops"]');
   await settleOffline(page);
-  const {publicData,imageOrigin}=await (await page.request.get(appURL('release.json'))).json();
+  const {publicData,imageOrigin,gameLocalization}=await (await page.request.get(appURL('release.json'))).json();
+  const russian=gameLocalization?.languages.includes('ru')
+   ? await (await page.request.get(await assetURL(page,'data/game-localization/ru.json'))).json() : null;
   const builtInIcons=publicData&&!imageOrigin;
   if(builtInIcons)await assertCatalogIcon(page,'.hero-info','antler');
   assert.equal(await page.locator('[data-web-update]').isVisible(),false,'No update action before a newer release');
@@ -48,7 +50,9 @@ async function settleOffline(page){
   await rarity.waitFor();
   if(builtInIcons)await assertCatalogIcon(page,'.recipe-target-heading','axe');
   assert.equal(await rarity.inputValue(),'any');
-  assert.match(await page.locator('.recipe-target-heading').innerText(),/Emarium Axe[\s\S]*Обычная/);
+  const axeLabel=await page.locator('.recipe-target-heading').innerText();
+  assert.match(axeLabel,/Emarium Axe/);
+  assert.ok(axeLabel.includes(russian?.strings.Common||'Обычная'));
   assert.match(await root.locator('summary').first().innerText(),/Любая редкость/);
   const quantity=page.locator('[data-key="recipeBook.quantity"]');
   await quantity.fill('110');await quantity.press('Tab');
@@ -122,7 +126,7 @@ async function settleOffline(page){
   await page.locator('.resource-sources [data-id="item:400827528"]').waitFor();
   await page.goto(appURL('#/dungeons/1084069097'));
   await page.reload();
-  await page.locator('#dungeon-heading').filter({hasText:'Логово аракниров'}).waitFor();
+  await page.getByRole('heading',{ name: catalogName('Araknir Den') }).waitFor();
   await page.getByRole('button',{ name: catalogName("Araknir Scroll") }).waitFor();
   if(builtInIcons)await assertCatalogIcon(page,'.recipe-target-heading','spider');
   await page.goto(appURL('#/world/achievements/106'));

@@ -1,4 +1,4 @@
-import { gameSearch, searchable as searchForm } from './catalog-language.js';
+import { catalogSearchKey, gameSearch, searchable as searchForm } from './catalog-language.js';
 export const WORLD_MODES = Object.freeze({
   achievements: 'Достижения', biomes: 'Биомы', prospecting: 'Разведка'
 });
@@ -55,7 +55,9 @@ function append(index, id, value) {
 }
 
 export function getWorldIndex(book) {
-  if (indexes.has(book)) return indexes.get(book);
+  const language = catalogSearchKey();
+  const previous = indexes.get(book);
+  if (previous?.language === language) return previous;
   const { achievements = [], collectibles = [], biomes = [], prospecting = [] } = book.catalog.world || {};
   const rawAchievements = byId(achievements);
   const skills = byId(book.catalog.guide?.skills || []);
@@ -94,7 +96,7 @@ export function getWorldIndex(book) {
     for (const id of entry.biomes) append(searchesByBiome, id, entry);
   }
   const index = {
-    entries, byMode: Object.fromEntries(Object.entries(entries).map(([mode, rows]) => [mode, byId(rows)])),
+    language, entries, byMode: Object.fromEntries(Object.entries(entries).map(([mode, rows]) => [mode, byId(rows)])),
     skills: [...skills.values()].filter(skill => skillIds.has(skill.id)).sort(byName),
     collectibles: byId(collectibles), unlocks, searchesByBiome
   };

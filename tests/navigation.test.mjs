@@ -52,3 +52,13 @@ test('dungeon routes round-trip only the selected public ID and accept older sta
     assert.equal(parseRoute(hash),null,hash);
   }
 });
+
+test('the checklist has a local route with plan identity kept in history state',()=>{
+  const state={tab:'journal',journal:{view:'checklist',id:'Private plan'},saved:[{title:'Private plan',progress:{logs:8}}]};
+  assert.equal(routeForState(state),'#/plans/checklist');
+  assert.equal(parseRoute('#/plans/checklist/Private%20plan'),null);
+  applyRoute(state,parseRoute('#/plans'));
+  assert.deepEqual(state.journal,{view:'list',id:'Private plan'});
+  applyRoute(state,parseRoute('#/plans/checklist'),{journalPlanId:'Another plan'});
+  assert.deepEqual(state.journal,{view:'checklist',id:'Another plan'});
+});

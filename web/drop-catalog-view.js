@@ -1,4 +1,4 @@
-import { t as tr, formatNumber, formatDate, locale } from './i18n.js';
+import { t as tr, decimalSeparator, formatNumber, formatDate, locale } from './i18n.js';
 import { gameName } from './catalog-language.js';
 import { entityImage } from './entity-images.js';
 import { ensureRecipeCatalog, getRecipeBook, recipeCatalogError } from './recipes-view.js';
@@ -79,7 +79,7 @@ export function dropBrowserView(state, selected, icon) {
 export function dropChanceField(entry) {
   return `<div class="field"><span id="drop-chance-caption">${tr("Шанс за попытку")}</span>
     <output class="drop-chance-value" aria-labelledby="drop-chance-caption" data-drop-probability="${entry.chance}"
-      title="${String(entry.chance * 100).replace('.', locale() === 'ru-RU' ? ',' : '.')}%">${chanceLabel(entry.chance)}</output>
+      title="${String(entry.chance * 100).replace('.', decimalSeparator())}%">${chanceLabel(entry.chance)}</output>
     <small>${tr("Снимок {0}", formatDate(entry.snapshot))}</small></div>`;
 }
 

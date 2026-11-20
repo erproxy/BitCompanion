@@ -9,6 +9,7 @@ import { createHash } from 'node:crypto';
 import { buildWeb } from '../scripts/build-web.mjs';
 import { createWebServer, normalizeBasePath } from '../scripts/serve-web.mjs';
 import { chooseEncoding } from '../scripts/web-headers.mjs';
+import { gameLanguageFile } from '../web/catalog-locales.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -116,6 +117,34 @@ test('a public build selects public data even when a full local snapshot exists'
     await fs.unlink(path.join(f.sourceRoot, 'data/recipe-catalog.json'));
     const fallback = await buildWeb({ projectRoot: f.root, outputRoot });
     assert.equal(fallback.release, published.release);
+  } finally { await f.cleanup(); }
+});
+
+test('imported game translations are cached locally and excluded from a public release', async () => {
+  const f = await fixture();
+  try {
+    await fs.unlink(path.join(f.sourceRoot, 'data/recipe-catalog.json'));
+    const input = path.join(f.root, 'data/bitcraft/localization/catalog.json');
+    await fs.mkdir(path.dirname(input), { recursive: true });
+    const commit = 'public-snapshot';
+    const strings = { 'Test item': 'Objet de test' };
+    await fs.writeFile(input, JSON.stringify({
+      formatVersion: 1, steamBuild: '12345', commit, languages: { fr: { strings } }
+    }));
+
+    const local = await f.build();
+    const file = gameLanguageFile('fr');
+    assert.deepEqual(local.gameLocalization, { commit, steamBuild: '12345', languages: ['fr'] });
+    assert.ok(local.core.includes(local.releaseBase + file));
+    const pack = await fs.readFile(path.join(f.outputRoot, local.releaseBase, file), 'utf8');
+    assert.deepEqual(JSON.parse(pack), { language: 'fr', commit, strings });
+    await assert.rejects(buildWeb({ projectRoot: f.root, outputRoot: f.outputRoot, publicBuild: true }),
+      /Public output contains a local release/);
+
+    const published = await buildWeb({ projectRoot: f.root, publicBuild: true });
+    assert.equal(published.gameLocalization, undefined);
+    assert.ok(!published.files.some(asset => asset.path === file));
+    assert.ok(!published.core.includes(published.releaseBase + file));
   } finally { await f.cleanup(); }
 });
 

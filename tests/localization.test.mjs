@@ -4,7 +4,7 @@ import test from 'node:test';
 import { catalogDirectory } from './catalog-fixture.mjs';
 import { collectCatalogStrings } from '../scripts/catalog-localization.mjs';
 import { gameName, gameSearch, gameText, installCatalogLanguage } from '../web/catalog-language.js';
-import { formatDate, formatNumber, resolveLanguage, setLanguage, t } from '../web/i18n.js';
+import { formatDate, formatNumber, interfaceLanguage, resolveLanguage, setLanguage, t } from '../web/i18n.js';
 import { messagesEn } from '../web/messages-en.js';
 
 test('system language follows supported preferences with English fallback', () => {
@@ -14,6 +14,14 @@ test('system language follows supported preferences with English fallback', () =
   assert.equal(resolveLanguage('system', ['fr-CA']), 'en');
   assert.equal(resolveLanguage('en', ['ru']), 'en');
   assert.equal(resolveLanguage('ru', ['en']), 'ru');
+  const imported = ['es-419', 'fr', 'ja', 'pt-BR', 'zh-Hans', 'zh-Hant'];
+  assert.equal(resolveLanguage('system', ['fr-CA', 'ru-RU'], imported), 'fr');
+  assert.equal(resolveLanguage('system', ['zh-TW'], imported), 'zh-Hant');
+  assert.equal(resolveLanguage('system', ['zh-Hans-HK'], imported), 'zh-Hans');
+  assert.equal(resolveLanguage('system', ['es-MX'], imported), 'es-419');
+  assert.equal(resolveLanguage('system', ['pt-PT'], imported), 'pt-BR');
+  assert.equal(resolveLanguage('ja', ['en-US'], imported), 'ja');
+  assert.equal(resolveLanguage('ja', ['en-US']), 'en');
 });
 
 test('English messages preserve data interpolation and display conventions', () => {
@@ -56,5 +64,25 @@ test('all catalog strings have an offline dictionary entry and public names have
   assert.equal(gameName('Rathium Pickaxe'), 'Rathium Pickaxe');
   assert.equal(gameName('Calm Forest', 'Спокойный лес'), 'Calm Forest');
   assert.match(gameSearch('Rathium Pickaxe'), /кирка ратия/);
+  setLanguage('ru');
+});
+
+test('the selected game language takes precedence and English and older Russian terms remain searchable', () => {
+  const commit = 'snapshot';
+  installCatalogLanguage({ commit, strings: { 'Test tool': 'Старое название' } }, commit);
+  installCatalogLanguage({ commit, language: 'ru', strings: { 'Test tool': 'Новое название' } }, commit);
+  installCatalogLanguage({ commit, language: 'fr', strings: { 'Test tool': 'Outil de test', 'Test description': 'Un outil.' } }, commit);
+  setLanguage('ru');
+  assert.equal(gameName('Test tool', 'Из пресета'), 'Новое название (Test tool)');
+  assert.equal(gameName('Other tool', 'Из пресета'), 'Из пресета (Other tool)');
+  setLanguage('fr', [], ['fr']);
+  assert.equal(interfaceLanguage(), 'en');
+  assert.equal(gameName('Test tool'), 'Outil de test (Test tool)');
+  assert.equal(gameText('Test description'), 'Un outil.');
+  assert.equal(gameName('Other tool', 'Из пресета'), 'Other tool');
+  assert.match(gameSearch('Test tool'), /test tool outil de test новое название старое название/);
+  assert.equal(formatNumber(1234.5, 2).replace(/\s/g, ' '), '1 234,5');
+  setLanguage('en');
+  assert.equal(gameName('Test tool'), 'Test tool');
   setLanguage('ru');
 });

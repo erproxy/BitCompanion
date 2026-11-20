@@ -37,7 +37,7 @@ function entityLink(book, key) {
   if (key.startsWith('crafting:')) {
     const recipe = book.recipesByKey.get(key);
     const output = recipe?.outputs[0] || recipe?.possibleOutputs[0];
-    return output ? itemLink(book, output.key, { text: recipe.name, recipeKey: key }) : escape(gameName(recipe?.name || key));
+    return output ? itemLink(book, output.key, { text: gameName(recipe.name), recipeKey: key }) : escape(gameName(recipe?.name || key));
   }
   if (key.startsWith('item:') || key.startsWith('cargo:') || key.startsWith('chest:')) return itemLink(book, key);
   const entity = book.entitiesByKey.get(key);

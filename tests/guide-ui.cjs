@@ -74,8 +74,8 @@ const { appURL, browserName, launchBrowser, catalogName } = require('./browser-r
     assert.match(await guide.locator('.guide-current-level').textContent(), /уровень 33/);
     const peltRows = guide.locator('.guide-unlock-row').filter({ hasText: 'Harvest Sturdy Raw Pelt' });
     assert.equal(await peltRows.count(), 2);
-    assert.match(await peltRows.first().textContent(), /Рецепт с уровня 30.*Из .*\(Female Cervus\)/s);
-    assert.match(await peltRows.last().textContent(), /Рецепт с уровня 30.*Из .*\(Cervus\)/s);
+    assert.match(await peltRows.first().textContent(), /Рецепт с уровня 30.*Из (?:.*\(Female Cervus\)|Female Cervus)/s);
+    assert.match(await peltRows.last().textContent(), /Рецепт с уровня 30.*Из (?:.*\(Cervus\)|Cervus)/s);
     assert.match(await guide.locator('.guide-unlock-row').filter({ hasText: 'Emarium Bow' }).first().textContent(), /Ношение с уровня 30 · T3/);
     await guide.locator('img[data-entity-image="item:11020"]').evaluate(img => img.decode());
     await page.locator('#guide-results [data-id="9"] img[data-entity-image="item:11020"]').waitFor();

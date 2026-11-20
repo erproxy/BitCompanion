@@ -1,11 +1,12 @@
-import { currentLanguage, formatDate, formatNumber, LANGUAGE_KEY, languagePreference, locale, localizeDefault, readLanguagePreference, setLanguage, storeLanguagePreference, t as tr } from './i18n.js';
-import { gameName, rarityName } from './catalog-language.js';
+import { availableLanguages, currentLanguage, decimalSeparator, formatDate, formatNumber, interfaceLanguage, LANGUAGE_KEY, languagePreference, locale, localizeDefault, readLanguagePreference, resolveLanguage, setLanguage, storeLanguagePreference, t as tr } from './i18n.js';
+import { gameName, loadOfficialCatalogLanguage, rarityName } from './catalog-language.js';
+import { catalogLocales } from './catalog-locales.js';
 import { RARITIES, DROPS, probabilityAtLeast, attemptsForConfidence, expectedAttempts, rarityDistribution, planResources } from './domain.js';
 import { recipeDefaults, normalizeRecipeState, configureRecipes, recipesView, recipeResults, recipeSummary, recipeCopyText, retryRecipes, recipeCatalogError, recipeCatalogVersion, getRecipeBook, ensureRecipeCatalog } from './recipes-view.js';
 import { resourceCatalogDefaults, normalizeResourceCatalogState, configureResources, resourcesCatalogView, resourceResults, retryResourceCatalog } from './resources-view.js';
 import { RESOURCE_MODES, resourceModeForKey, setResourceMode } from './resource-domain.js';
 import { entityImage, DROP_ENTITY_KEYS, hasGameImages } from './entity-images.js';
-import { assetUrl } from './runtime-config.js';
+import { assetUrl, runtimeConfig } from './runtime-config.js';
 import { initWebPlatform, getWebPlatformState, prepareOfflineImages, applyWebUpdate } from './web-platform.js';
 import { parseRoute, routeForState, applyRoute } from './navigation.js';
 import { DEFAULT_PRODUCTION_QUANTITY, setProductionTarget } from './recipe-domain.js';
@@ -18,22 +19,33 @@ import { WORLD_MODES, WORLD_SEARCH_LIMIT, normalizeWorldState, worldDefaults } f
 import { worldResults, worldView } from './world-view.js';
 import { DROP_MODES, DROP_SEARCH_LIMIT, dropBrowserDefaults, findDropEntry, normalizeDropBrowser, normalizeDropEntry } from './drop-catalog.js';
 import { dropBrowserView, dropChanceField, dropResults, dropSourceView, dropTabs } from './drop-catalog-view.js';
+import { createPlanChecklist, createRecipeChecklist, isProductionPlan, normalizePlanProgress } from './plan-checklist.js';
+import { planChecklistView, updatePlanBranches, updatePlanChecklist } from './plan-checklist-view.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num = (n, digits = 2) => Number.isFinite(n) ? formatNumber(n, digits) : '∞';
-const pct = p => p > 0 && p < 1e-8 ? (p*100).toExponential(2).replace('.', currentLanguage() === 'ru' ? ',' : '.') : num(p * 100, p > 0 && p < .001 ? 6 : p < .01 ? 4 : 2);
+const pct = p => p > 0 && p < 1e-8 ? (p*100).toExponential(2).replace('.', decimalSeparator()) : num(p * 100, p > 0 && p < .001 ? 6 : p < .01 ? 4 : 2);
+const gameLanguages = runtimeConfig.gameLocalization?.languages ?? [];
 let preferredLanguage = readLanguagePreference();
-function updateLanguage() {
+let languageRequest = 0;
+async function updateLanguage() {
+ const request = ++languageRequest;
  const systemLanguages = navigator.languages?.length ? navigator.languages : [navigator.language];
- document.documentElement.lang = setLanguage(preferredLanguage, systemLanguages);
+ const language = resolveLanguage(preferredLanguage, systemLanguages, gameLanguages);
+ let ready = true;
+ try { await loadOfficialCatalogLanguage(language); }
+ catch { ready = false; }
+ if(request!==languageRequest)return;
+ setLanguage(language, [], gameLanguages);
+ document.documentElement.lang = interfaceLanguage();
+ return ready;
 }
-updateLanguage();
+const initialLanguageReady = await updateLanguage();
 function languageSelect() {
- const options = [['ru', 'Русский'], ['en', 'English']];
  const selected = currentLanguage();
- return `<select id="interface-language" class="language-select" aria-label="${tr('Язык интерфейса')}" title="${tr('Язык интерфейса')}">
-  ${options.map(([value, label]) => `<option value="${value}"${value === selected ? ' selected' : ''}>${label}</option>`).join('')}
+ return `<select id="interface-language" class="language-select" aria-label="${tr('Язык')}" title="${tr('Язык')}">
+  ${availableLanguages(gameLanguages).map(code => `<option value="${code}" lang="${code}"${code === selected ? ' selected' : ''}>${catalogLocales[code].label}</option>`).join('')}
  </select>`;
 }
 const uid = () => 'u-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
@@ -56,6 +68,7 @@ const paths = {
  plus:'M12 5v14 M5 12h14',
  close:'m6 6 12 12 M6 18 18 6',
  arrow:'M4 12h16 m-6-6 6 6-6 6',
+ chevron:'m9 18 6-6-6-6',
  chart:'M4 4v16h17 M7 15l5-5 4 2 4-6',
  target:'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z M12 11v2',
  shield:'m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z m-4 9 3 3 5-6',
@@ -83,7 +96,7 @@ const defaults = () => ({version:1,tab:'drops',recipeBook:recipeDefaults(),resou
  {id:'expedition',name:tr("Набор для похода · пример"),output:1,seconds:30,ingredients:[{id:'board',name:tr("Доски · пример"),amount:4},{id:'rope',name:tr("Верёвка · пример"),amount:2}]},
  {id:'board',name:tr("Доски · пример"),output:2,seconds:10,ingredients:[{id:'logs',name:tr("Брёвна"),amount:3}]},
  {id:'rope',name:tr("Верёвка · пример"),output:1,seconds:8,ingredients:[{id:'fiber',name:tr("Волокно"),amount:5}]}
- ]},time:{budget:2,seconds:45,label:tr("Сбор ресурсов"),startedAt:null,elapsed:0,sessions:[]},saved:[]});
+ ]},time:{budget:2,seconds:45,label:tr("Сбор ресурсов"),startedAt:null,elapsed:0,sessions:[]},saved:[],journal:{view:'list',id:''}});
 const sampleLabels={expedition:'Набор для похода · пример',board:'Доски · пример',rope:'Верёвка · пример',logs:'Брёвна',fiber:'Волокно'};
 const sampleName = (id, value) => Object.hasOwn(sampleLabels,id)?localizeDefault(value,sampleLabels[id]):value;
 const STORE = 'bitcraft-companion-v1';
@@ -130,7 +143,14 @@ function normalize(raw,{savedPlan=false}={}) {
   if(r.inventory&&typeof r.inventory==='object')for(const [id,value]of Object.entries(r.inventory).slice(0,1000)){if(!['__proto__','constructor','prototype'].includes(id))d.resources.inventory[id]=n(value,0);}
  }
  if (raw.time) {const r=raw.time;d.time={budget:n(r.budget,2,0,10000),seconds:n(r.seconds,45,.001,86400),label:str(r.label,tr("Сбор ресурсов")),startedAt:r.startedAt&&n(r.startedAt,0,1,Date.now()+60000)||null,elapsed:n(r.elapsed,0,0,1e12),sessions:(Array.isArray(r.sessions)?r.sessions:[]).slice(0,100).filter(x=>x&&typeof x==='object').map(x=>({id:str(x.id,uid()),label:str(x.label,tr("Сессия")),seconds:n(x.seconds,0,0,1e12),date:n(x.date,Date.now(),1,Date.now()+60000)}))};}
- d.saved=(Array.isArray(raw.saved)?raw.saved:[]).slice(0,50).filter(x=>x&&['drops','rarity','resources','recipeBook'].includes(x.type)&&typeof x.id==='string').map(x=>({id:str(x.id),title:str(x.title,tr("Расчёт")),type:x.type,date:n(x.date,Date.now(),1,Date.now()+60000),summary:str(x.summary,'',300),data:normalizeSaved(x.type,x.data)}));
+ d.saved=(Array.isArray(raw.saved)?raw.saved:[]).slice(0,50).filter(x=>x&&['drops','rarity','resources','recipeBook'].includes(x.type)&&typeof x.id==='string').map(x=>{
+  const plan={id:str(x.id),title:str(x.title,tr("Расчёт")),type:x.type,date:n(x.date,Date.now(),1,Date.now()+60000),summary:str(x.summary,'',300),data:normalizeSaved(x.type,x.data)};
+  if(isProductionPlan(plan))plan.progress=normalizePlanProgress(x.progress);
+  return plan;
+ });
+ if(d.saved.some(plan=>plan.id===raw.journal?.id&&isProductionPlan(plan))){
+  d.journal={id:raw.journal.id,view:raw.journal.view==='checklist'?'checklist':'list'};
+ }
  return d;
 }
 function normalizeSaved(type,data){const base={version:1};base[type==='drops'?'drop':type]=data;const normalized=normalize({...base,saved:[]},{savedPlan:true});return normalized[type==='drops'?'drop':type];}
@@ -144,14 +164,16 @@ async function persist(){
 function storageStatusChanged(){const label=$('.saved-status');if(label)label.innerHTML=icon(storageAvailable&&!storageConflict?'check':'info')+(storageConflict?tr("Изменено в другой вкладке"):pendingWrites?tr("Сохраняем…"):storageAvailable?tr("Сохранено на устройстве"):tr("Нужен экспорт копии"));}
 function syncRoute(replace=false){
  const hash=routeForState(state);
- if(location.hash!==hash)history[replace||!routeInitialized?'replaceState':'pushState'](null,'',hash);
+ const journalPlanId=hash==='#/plans/checklist'?state.journal.id||undefined:undefined;
+ if(location.hash!==hash||history.state?.journalPlanId!==journalPlanId)
+  history[replace||!routeInitialized?'replaceState':'pushState'](journalPlanId?{journalPlanId}:null,'',hash);
  routeInitialized=true;
 }
 async function restoreRoute(){
  if(storageConflict)return;
  const route=parseRoute(location.hash);if(!route)return;
- if(routeForState(state)===location.hash)return;
- applyRoute(state,route);syncRoute(true);const saving=persist();render();await saving;
+ if(routeForState(state)===location.hash&&(!route.checklist||!history.state?.journalPlanId||state.journal.id===history.state.journalPlanId))return;
+ applyRoute(state,route,history.state);syncRoute(true);const saving=persist();render();await saving;
 }
 window.addEventListener('popstate',restoreRoute);
 window.addEventListener('hashchange',restoreRoute);
@@ -180,13 +202,15 @@ function platformChanged(){
 function toast(message){clearTimeout(toastTimer);$('#toast').textContent=tr(message);$('#toast').classList.add('visible');toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3500);}
 const titles={recipeBook:['От цели до последнего ресурса.','Рецептурная книга BitCraft: состав, источники и план производства.'],drops:['У каждого трофея свой шанс.','Планируем спокойно. Оставляем место удаче.'],rarity:['На ступень выше.','Перековка снаряжения и путь от T1 до T10.'],resources:['Всё начинается с ресурсов.','Материалы, постройки и существа BitCraft.'],guide:['Справочник BitCraft','Профессии, знания и квесты из игрового снимка.'],world:['Мир','Данные из локального снимка BitCraft.'],dungeons:['Данжи','Входы, переходы и награды из игрового снимка.'],time:['Время на приключение.','Планируй сессию и замечай, куда уходит время.'],journal:['Будущие открытия начинаются здесь.','Твои сохранённые расчёты всегда под рукой.']};
 const resourcePills={game:'Игровые материалы',buildings:'Постройки и станции',creatures:'Животные и монстры',custom:'Свои нормы и запасы'};
+const inChecklist=()=>state.tab==='journal'&&state.journal.view==='checklist';
+const selectedPlan=()=>state.saved.find(plan=>plan.id===state.journal.id&&isProductionPlan(plan));
 function render(){
  renderAfterPointer=false;
  const activeDropTab=state.tab==='drops'?`drop-tab-${state.dropBrowser.mode}`:'';
  const restoreDropTab=activeDropTab&&document.activeElement?.id===activeDropTab;
  document.body.dataset.tab=state.tab;
- const [title,subtitle]=titles[state.tab].map(label=>tr(label));
- $('#app').innerHTML=`<aside class="sidebar"><div class="brand"><img src="${esc(assetUrl('icon.svg'))}" alt=""><div><strong>BitCraft</strong><small>COMPANION</small></div></div><div class="nav-label">${tr("МАСТЕРСКАЯ")}</div><nav aria-label="${tr("Разделы сайта")}">${tabs.map(([id,i,name])=>`<button class="nav-item ${state.tab===id?'active':''}" data-action="tab" data-tab="${id}" title="${esc(tr(name))}" ${state.tab===id?'aria-current="page"':''}>${icon(i)}<span>${tr(name)}</span>${id==='journal'&&state.saved.length?`<span class="nav-count">${state.saved.length}</span>`:''}</button>`).join('')}</nav><div class="sidebar-footer"><div class="sidebar-note">${icon('moon')}<b>${tr("Тихий час для открытий.")}</b><p>${tr("Твои планы остаются")}<br>${tr("на этом устройстве.")}</p></div><div class="version"><span class="online-dot"></span><span>${tr("Данные на устройстве")}</span></div></div></aside><main class="main"><header class="topbar"><div class="breadcrumbs">${icon('home')}<span>${tr("Мастерская")}</span><span>/</span><b>${tr(tabs.find(t=>t[0]===state.tab)[2])}</b></div><div class="top-actions"><button class="text-button" data-web-update data-action="web-update" hidden>${tr("Обновить")}</button><span class="saved-status">${icon(storageAvailable&&!storageConflict?'check':'info')}${storageConflict?tr("Изменено в другой вкладке"):storageAvailable?tr("Сохранено на устройстве"):tr("Нужен экспорт копии")}</span><button class="icon-button" data-action="export" title="${tr("Экспорт всех данных")}" aria-label="${tr("Экспорт всех данных")}">${icon('download')}</button><button class="icon-button" data-action="import" title="${tr("Импорт данных")}" aria-label="${tr("Импорт данных")}">${icon('upload')}</button><button class="icon-button" data-action="sources" title="${tr("Источники и справка")}" aria-label="${tr("Источники и справка")}">${icon('info')}</button>${languageSelect()}</div></header><div class="content">${storageWarning()}<div class="page-title"><div><p class="eyebrow">${tr("ЛУННАЯ ОБСЕРВАТОРИЯ")}</p><h1>${title}</h1><p class="subtitle">${subtitle}</p></div>${['world','dungeons'].includes(state.tab)?'':`<span class="pill">${icon('moon')} ${{recipeBook:tr("Рецепты и цепочки"),drops:tr("Независимые проверки"),rarity:tr("Одна ступень за попытку"),resources:tr(resourcePills[state.resourceCatalog.mode]),guide:tr("Разблокировки и награды"),time:tr("Время для приключений"),journal:tr("Твои сохранённые цели")}[state.tab]}</span>`}</div><div id="view"></div><footer class="footer"><span>${tr("{0} Независимый помощник игрока · BitCraft Online", icon('leaf'))}</span><button class="text-button" data-action="sources">${tr("Снимок данных: 13.11.2026 {0}", icon('info'))}</button></footer></div></main>`;
+ const [title,subtitle]=inChecklist()?[tr("Список работ"),'']:titles[state.tab].map(label=>tr(label));
+ $('#app').innerHTML=`<aside class="sidebar"><div class="brand"><img src="${esc(assetUrl('icon.svg'))}" alt=""><div><strong>BitCraft</strong><small>COMPANION</small></div></div><div class="nav-label">${tr("МАСТЕРСКАЯ")}</div><nav aria-label="${tr("Разделы сайта")}">${tabs.map(([id,i,name])=>`<button class="nav-item ${state.tab===id?'active':''}" data-action="tab" data-tab="${id}" title="${esc(tr(name))}" ${state.tab===id?'aria-current="page"':''}>${icon(i)}<span>${tr(name)}</span>${id==='journal'&&state.saved.length?`<span class="nav-count">${state.saved.length}</span>`:''}</button>`).join('')}</nav><div class="sidebar-footer"><div class="sidebar-note">${icon('moon')}<b>${tr("Тихий час для открытий.")}</b><p>${tr("Твои планы остаются")}<br>${tr("на этом устройстве.")}</p></div><div class="version"><span class="online-dot"></span><span>${tr("Данные на устройстве")}</span></div></div></aside><main class="main"><header class="topbar"><div class="breadcrumbs">${icon('home')}<span>${tr("Мастерская")}</span><span>/</span><b>${tr(tabs.find(t=>t[0]===state.tab)[2])}</b></div><div class="top-actions"><button class="text-button" data-web-update data-action="web-update" hidden>${tr("Обновить")}</button><span class="saved-status">${icon(storageAvailable&&!storageConflict?'check':'info')}${storageConflict?tr("Изменено в другой вкладке"):storageAvailable?tr("Сохранено на устройстве"):tr("Нужен экспорт копии")}</span><button class="icon-button" data-action="export" title="${tr("Экспорт всех данных")}" aria-label="${tr("Экспорт всех данных")}">${icon('download')}</button><button class="icon-button" data-action="import" title="${tr("Импорт данных")}" aria-label="${tr("Импорт данных")}">${icon('upload')}</button><button class="icon-button" data-action="sources" title="${tr("Источники и справка")}" aria-label="${tr("Источники и справка")}">${icon('info')}</button>${languageSelect()}</div></header><div class="content">${storageWarning()}<div class="page-title"><div><p class="eyebrow">${tr("ЛУННАЯ ОБСЕРВАТОРИЯ")}</p><h1>${title}</h1>${subtitle?`<p class="subtitle">${subtitle}</p>`:''}</div>${inChecklist()||['world','dungeons'].includes(state.tab)?'':`<span class="pill">${icon('moon')} ${{recipeBook:tr("Рецепты и цепочки"),drops:tr("Независимые проверки"),rarity:tr("Одна ступень за попытку"),resources:tr(resourcePills[state.resourceCatalog.mode]),guide:tr("Разблокировки и награды"),time:tr("Время для приключений"),journal:tr("Твои сохранённые цели")}[state.tab]}</span>`}</div><div id="view"></div><footer class="footer"><span>${tr("{0} Независимый помощник игрока · BitCraft Online", icon('leaf'))}</span><button class="text-button" data-action="sources">${tr("Снимок данных: 13.11.2026 {0}", icon('info'))}</button></footer></div></main>`;
  try {$('#view').innerHTML=({recipeBook:()=>recipesView(state.recipeBook),drops:dropView,rarity:rarityView,resources:resourcesView,guide:()=>guideView(state.guide),world:()=>worldView(state.world,icon),dungeons:()=>dungeonsView(state.dungeons,{icon,duration}),time:timeView,journal:journalView}[state.tab])();}catch(e){$('#view').innerHTML=`<div class="error">${esc(e.message)}<br><button class="secondary" data-action="recover">${tr("Восстановить параметры этого раздела")}</button></div>`;}
  tick();syncRoute();platformChanged();storageStatusChanged();
  if(restoreDropTab)document.getElementById(activeDropTab)?.focus({preventScroll:true});
@@ -197,7 +221,7 @@ function stepper(label,key,value){return`<label class="field"><span>${label}</sp
 const notice = text => `<div class="notice">${icon('info')}<p>${text}</p></div>`;
 const saveButton = type => `<button class="primary full" data-action="save" data-type="${type}">${tr("{0} Сохранить план {1}", icon('book'), icon('arrow'))}</button>`;
 function constellation(){return `<svg class="constellation" viewBox="0 0 690 290" aria-hidden="true"><g fill="none"><path d="m320 32 40 27 48-19 59 35 60-17 47 54 78-26 M528 58l-8 72 54-18 30 62"/></g><g><circle cx="320" cy="32" r="2"/><circle cx="360" cy="59" r="2"/><circle cx="408" cy="40" r="2"/><circle cx="467" cy="75" r="2"/><circle cx="528" cy="58" r="2"/><circle cx="574" cy="112" r="2"/><circle cx="652" cy="86" r="2"/></g></svg>`;}
-function hero(title,sub,i='antler',rarity=null,item=null){return `<div class="hero card">${constellation()}<div class="hero-info"><div class="item-emblem">${item?entityImage(item,{size:'lg'}):icon(i)}</div><div><h2>${esc(title)}</h2><p class="subtitle">${esc(sub)}</p>${rarity?`<span class="rarity-chip" style="--rarity:${rarity.color}">${rarityName(rarity.en)}</span>`:''}</div></div></div>`;}
+function hero(title,sub,i='antler',rarity=null,item=null){return `<div class="hero card">${constellation()}<div class="hero-info"><div class="item-emblem">${item?entityImage(item,{size:'lg'}):icon(i)}</div><div><h2>${esc(title)}</h2><p class="subtitle">${esc(sub)}</p>${rarity?`<span class="rarity-chip" style="--rarity:${rarity.color}">${esc(rarityName(rarity.en))}</span>`:''}</div></div></div>`;}
 function dropData(d = state.drop) {
  const preset = DROPS.find(entry => entry.id === d.preset);
  const catalogEntry = d.preset === 'catalog' ? d.catalogEntry : null;
@@ -279,10 +303,10 @@ function rarityView(){
  let body;
  if(r.mode==='recraft'){
   const target=RARITIES[r.transition],from=RARITIES[r.transition-1],p=target.chance;
-  body=`${hero(`${rarityName(from.en)} → ${rarityName(target.en)}`,tr("Один переход редкости · тир предмета сохраняется"),'sparkle',target)}<div class="workspace"><section class="card card-pad"><div class="section-title"><h2><span class="section-number">01</span>${tr("План перековки")}</h2></div>${selectField(tr("Переход редкости"),'rarity.transition',RARITIES.slice(1).map((x,i)=>[i+1,`${rarityName(RARITIES[i].en)} → ${rarityName(x.en)} · ${pct(x.chance)}%`]),r.transition)}<div class="row">${field(tr("Количество попыток"),'rarity.attempts',r.attempts)}${field(tr("Время на попытку"),'rarity.seconds',r.seconds,{unit:tr("сек"),max:86400,step:'any'})}</div><div class="tip">${icon('info')}<span>${tr("Неудача сохраняет редкость. Для Recraft нужны сам предмет, лом и Reforging Solvent. Точную стоимость смотри в рецепте игры.")}</span></div>${saveButton('rarity')}<div class="separator" style="margin-top:22px"></div><h3 style="margin-bottom:10px">${tr("Все переходы")}</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>${tr("Новая редкость")}</th><th>${tr("Шанс")}</th><th>${tr("Для 95%")}</th></tr></thead><tbody>${RARITIES.slice(1).map((x,i)=>`<tr class="${i+1===r.transition?'highlight':''}"><td><span class="rarity-name"><i class="rarity-dot" style="--rarity:${x.color}"></i>${rarityName(x.en)}</span></td><td>${pct(x.chance)}%</td><td>${attemptsForConfidence(x.chance,1,.95)}</td></tr>`).join('')}</tbody></table></div></section><div class="stack">${resultCard(probabilityAtLeast(p,r.attempts),tr("ШАНС УСПЕШНОЙ ПЕРЕКОВКИ ЗА {0} ПОПЫТОК", num(r.attempts,0)),tr("Хотя бы один переход {0} → {1}", from.en, target.en),1/p,r.seconds,attemptsForConfidence(p,1,.95))}${chartCard(p,1,r.attempts)}${notice(tr("Считается один переход. Для следующей ступени действует уже другой шанс. У Mythic дальнейшей ступени нет; среднее число попыток не обещает успеха."))}</div></div>`;
+  body=`${hero(`${rarityName(from.en)} → ${rarityName(target.en)}`,tr("Один переход редкости · тир предмета сохраняется"),'sparkle',target)}<div class="workspace"><section class="card card-pad"><div class="section-title"><h2><span class="section-number">01</span>${tr("План перековки")}</h2></div>${selectField(tr("Переход редкости"),'rarity.transition',RARITIES.slice(1).map((x,i)=>[i+1,`${rarityName(RARITIES[i].en)} → ${rarityName(x.en)} · ${pct(x.chance)}%`]),r.transition)}<div class="row">${field(tr("Количество попыток"),'rarity.attempts',r.attempts)}${field(tr("Время на попытку"),'rarity.seconds',r.seconds,{unit:tr("сек"),max:86400,step:'any'})}</div><div class="tip">${icon('info')}<span>${tr("Неудача сохраняет редкость. Для Recraft нужны сам предмет, лом и Reforging Solvent. Точную стоимость смотри в рецепте игры.")}</span></div>${saveButton('rarity')}<div class="separator" style="margin-top:22px"></div><h3 style="margin-bottom:10px">${tr("Все переходы")}</h3><div class="table-wrap"><table class="data-table"><thead><tr><th>${tr("Новая редкость")}</th><th>${tr("Шанс")}</th><th>${tr("Для 95%")}</th></tr></thead><tbody>${RARITIES.slice(1).map((x,i)=>`<tr class="${i+1===r.transition?'highlight':''}"><td><span class="rarity-name"><i class="rarity-dot" style="--rarity:${x.color}"></i>${esc(rarityName(x.en))}</span></td><td>${pct(x.chance)}%</td><td>${attemptsForConfidence(x.chance,1,.95)}</td></tr>`).join('')}</tbody></table></div></section><div class="stack">${resultCard(probabilityAtLeast(p,r.attempts),tr("ШАНС УСПЕШНОЙ ПЕРЕКОВКИ ЗА {0} ПОПЫТОК", num(r.attempts,0)),tr("Хотя бы один переход {0} → {1}", rarityName(from.en), rarityName(target.en)),1/p,r.seconds,attemptsForConfidence(p,1,.95))}${chartCard(p,1,r.attempts)}${notice(tr("Считается один переход. Для следующей ступени действует уже другой шанс. У Mythic дальнейшей ступени нет; среднее число попыток не обещает успеха."))}</div></div>`;
  }else{
   const distribution=rarityDistribution(r.start,r.startTier,r.targetTier),most=distribution.indexOf(Math.max(...distribution));
-  body=`${hero(tr("От T{0} до T{1}", r.startTier, r.targetTier),tr("Одно улучшение на тир · без дополнительных перековок"),'sparkle')}<div class="workspace"><section class="card card-pad"><div class="section-title"><h2><span class="section-number">01</span>${tr("Цепочка улучшений")}</h2></div>${selectField(tr("Начальная редкость"),'rarity.start',RARITIES.map((x,i)=>[i,rarityName(x.en)]),r.start)}<div class="row">${selectField(tr("Начальный тир"),'rarity.startTier',Array.from({length:10-r.start},(_,i)=>[i+r.start+1,`T${i+r.start+1}`]),r.startTier)}${selectField(tr("Конечный тир"),'rarity.targetTier',Array.from({length:11-r.startTier},(_,i)=>[i+r.startTier,`T${i+r.startTier}`]),r.targetTier)}</div><div class="tip">${icon('info')}<span>${tr("Предмет может повысить редкость только на одну ступень за улучшение. Для обычной цепочки снаряжения Uncommon доступна с T2, Mythic — с T6.")}</span></div>${saveButton('rarity')}</section><section class="card card-pad"><div class="section-title"><h2>${tr("Редкость на T{0}", r.targetTier)}</h2><span class="badge">${tr("точное распределение")}</span></div>${distribution.map((p,i)=>`<div class="distribution-row"><span class="rarity-name"><i class="rarity-dot" style="--rarity:${RARITIES[i].color}"></i>${RARITIES[i].en}</span><div class="probability-bar"><i style="width:${p*100}%;--bar:${RARITIES[i].color}"></i></div><b>${pct(p)}%</b></div>`).join('')}<div class="mini-total"><span>${tr("Наиболее вероятный результат")}</span><strong style="font-size:19px;color:${RARITIES[most].color}">${RARITIES[most].en}</strong></div>${notice(tr("Показан шанс именно этой редкости. «1 из N» для полной цепочки не равно числу перековок уже легендарного предмета."))}</section></div><section class="card card-pad" style="margin-top:23px"><div class="section-title"><h2>${tr("Как меняются шансы по тирам")}</h2></div><div class="table-wrap"><table class="data-table"><thead><tr><th>${tr("Тир")}</th>${RARITIES.map(x=>`<th>${rarityName(x.en)}</th>`).join('')}</tr></thead><tbody>${Array.from({length:11-r.startTier},(_,i)=>{const tier=i+r.startTier;return`<tr class="${tier===r.targetTier?'highlight':''}"><td><b>T${tier}</b></td>${rarityDistribution(r.start,r.startTier,tier).map(p=>`<td>${p?pct(p)+'%':'—'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div></section>`;
+  body=`${hero(tr("От T{0} до T{1}", r.startTier, r.targetTier),tr("Одно улучшение на тир · без дополнительных перековок"),'sparkle')}<div class="workspace"><section class="card card-pad"><div class="section-title"><h2><span class="section-number">01</span>${tr("Цепочка улучшений")}</h2></div>${selectField(tr("Начальная редкость"),'rarity.start',RARITIES.map((x,i)=>[i,rarityName(x.en)]),r.start)}<div class="row">${selectField(tr("Начальный тир"),'rarity.startTier',Array.from({length:10-r.start},(_,i)=>[i+r.start+1,`T${i+r.start+1}`]),r.startTier)}${selectField(tr("Конечный тир"),'rarity.targetTier',Array.from({length:11-r.startTier},(_,i)=>[i+r.startTier,`T${i+r.startTier}`]),r.targetTier)}</div><div class="tip">${icon('info')}<span>${tr("Предмет может повысить редкость только на одну ступень за улучшение. Для обычной цепочки снаряжения Uncommon доступна с T2, Mythic — с T6.")}</span></div>${saveButton('rarity')}</section><section class="card card-pad"><div class="section-title"><h2>${tr("Редкость на T{0}", r.targetTier)}</h2><span class="badge">${tr("точное распределение")}</span></div>${distribution.map((p,i)=>`<div class="distribution-row"><span class="rarity-name"><i class="rarity-dot" style="--rarity:${RARITIES[i].color}"></i>${esc(rarityName(RARITIES[i].en))}</span><div class="probability-bar"><i style="width:${p*100}%;--bar:${RARITIES[i].color}"></i></div><b>${pct(p)}%</b></div>`).join('')}<div class="mini-total"><span>${tr("Наиболее вероятный результат")}</span><strong style="font-size:19px;color:${RARITIES[most].color}">${esc(rarityName(RARITIES[most].en))}</strong></div>${notice(tr("Показан шанс именно этой редкости. «1 из N» для полной цепочки не равно числу перековок уже легендарного предмета."))}</section></div><section class="card card-pad" style="margin-top:23px"><div class="section-title"><h2>${tr("Как меняются шансы по тирам")}</h2></div><div class="table-wrap"><table class="data-table"><thead><tr><th>${tr("Тир")}</th>${RARITIES.map(x=>`<th>${esc(rarityName(x.en))}</th>`).join('')}</tr></thead><tbody>${Array.from({length:11-r.startTier},(_,i)=>{const tier=i+r.startTier;return`<tr class="${tier===r.targetTier?'highlight':''}"><td><b>T${tier}</b></td>${rarityDistribution(r.start,r.startTier,tier).map(p=>`<td>${p?pct(p)+'%':'—'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div></section>`;
  }
  return`<div class="tabs-inline" role="tablist" aria-label="${tr("Режим редкости")}"><button role="tab" aria-selected="${r.mode==='recraft'}" class="${r.mode==='recraft'?'active':''}" data-action="rarity-mode" data-mode="recraft">${tr("Перековка")}</button><button role="tab" aria-selected="${r.mode==='tiers'}" class="${r.mode==='tiers'?'active':''}" data-action="rarity-mode" data-mode="tiers">${tr("Повышение тира")}</button></div>${body}`;
 }
@@ -309,8 +333,65 @@ function timeDropTip(attempts) {
 }
 function timeView(){const t=state.time,n=Math.floor(t.budget*3600/t.seconds);return`${hero(tr("Хорошее время для приключения"),tr("Пара часов, одна цель и немного удачи"),'clock')}<div class="workspace"><div class="stack"><section class="card card-pad"><div class="section-title"><h2><span class="section-number">01</span>${tr("Оценить сессию")}</h2></div><div class="row">${field(tr("Сколько есть времени?"),'time.budget',t.budget,{unit:tr("час"),max:10000,step:'any'})}${field(tr("На одну попытку"),'time.seconds',t.seconds,{unit:tr("сек"),min:.001,max:86400,step:'any'})}</div><div class="mini-total"><span>${tr("Успеешь выполнить")}</span><strong>${num(n,0)} <small style="font:11px 'Segoe UI'">${tr("попыток")}</small></strong></div>${timeDropTip(n)}<button class="secondary full" data-action="time-to-drop">${tr("{0}Перенести сессию в «Добычу»", icon('arrow'))}</button></section><section class="card card-pad"><div class="section-title"><h2>${tr("{0}Твоё время", icon('chart'))}</h2></div><div class="result-stats" style="padding:0"><div><div class="stat-label">${tr("Сегодня")}</div><div class="stat-value">${duration(t.sessions.filter(x=>new Date(x.date).toDateString()===new Date().toDateString()).reduce((s,x)=>s+x.seconds,0))}</div></div><div><div class="stat-label">${tr("Все записи")}</div><div class="stat-value">${duration(t.sessions.reduce((s,x)=>s+x.seconds,0))}</div></div></div></section></div><div class="stack"><section class="card card-pad"><div class="section-title"><h2>${tr("{0}Таймер приключения", icon('clock'))}</h2><span class="badge">${t.startedAt?tr("в пути"):tr("у костра")}</span></div><label class="field"><span>${tr("Чем занимаемся?")}</span><input data-key="time.label" value="${esc(localizeDefault(t.label,"Сбор ресурсов"))}" maxlength="140"></label><div class="timer-clock" id="timer-display" role="timer">00:00:00</div><p class="timer-status">${t.startedAt?tr("Считается по часам, даже если закрыть приложение."):tr("Запусти таймер, когда будешь готов.")}</p><div class="timer-buttons"><button class="primary" data-action="timer-toggle">${icon(t.startedAt?'pause':'play')}${t.startedAt?tr("Пауза"):t.elapsed?tr("Продолжить"):tr("Начать")}</button><button class="secondary" data-action="timer-finish">${tr("{0}Завершить", icon('check'))}</button></div></section><section class="card card-pad"><div class="section-title"><h2>${tr("{0}Журнал сессий", icon('book'))}</h2><span class="badge">${t.sessions.length} / 100</span></div>${t.sessions.length?t.sessions.map(x=>`<div class="session-row"><div class="session-icon">${icon('leaf')}</div><div class="session-text"><b>${esc(localizeDefault(x.label,"Сбор ресурсов"))}</b><small>${new Date(x.date).toLocaleString(locale(),{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div><strong>${duration(x.seconds)}</strong><button class="icon-button" data-action="delete-session" data-id="${esc(x.id)}" aria-label="${tr("Удалить сессию")}">${icon('close')}</button></div>`).join(''):`<div class="empty">${icon('leaf')}<h3>${tr("Здесь будут твои приключения")}</h3><p>${tr("Заверши первую сессию — сохраним её время.")}</p></div>`}</section></div></div>`;}
 function journalView(){
+ const plan=selectedPlan();
+ const showChecklist=inChecklist();
+ const modes=plan||showChecklist?`<div class="tabs-inline journal-tabs" role="tablist" aria-label="${tr("Мои планы")}">
+  <button id="journal-tab-list" role="tab" aria-controls="journal-panel" aria-selected="${!showChecklist}" tabindex="${showChecklist?-1:0}" class="${showChecklist?'':'active'}" data-action="journal-mode" data-view="list">${tr("Мои планы")}</button>
+  <button id="journal-tab-checklist" role="tab" aria-controls="journal-panel" aria-selected="${showChecklist}" tabindex="${showChecklist?0:-1}" class="${showChecklist?'active':''}" data-action="journal-mode" data-view="checklist">${tr("Список работ")}</button>
+ </div>`:'';
+ if(showChecklist)return modes+`<div id="journal-panel" role="tabpanel" aria-labelledby="journal-tab-checklist">${journalChecklist(plan)}</div>`;
  if(!getRecipeBook()&&!recipeCatalogError()&&state.saved.some(plan=>plan.type==="recipeBook"||plan.data?.catalogEntry))ensureRecipeCatalog().catch(()=>{});
- return`<div class="journal-tools"><p>${state.saved.length?tr("Сохранено планов: {0} из 50", state.saved.length):tr("Любой расчёт можно сохранить кнопкой «Сохранить план».")}</p><button class="secondary" data-action="export">${tr("{0}Резервная копия", icon('download'))}</button></div>${state.saved.length?`<div class="journal-grid">${state.saved.map(x=>`<article class="card saved-card"><div class="section-title"><span class="badge">${tr(tabs.find(t=>t[0]===x.type)[2])}</span><button class="icon-button" data-action="delete-saved" data-id="${esc(x.id)}" aria-label="${tr("Удалить сохранённый план")}">${icon('close')}</button></div><h2>${esc(journalSummary(x).title)}</h2><p>${esc(journalSummary(x).summary)}</p><div class="row"><span>${formatDate(x.date,{day:'numeric',month:'long'})}</span><button class="secondary" data-action="open-saved" data-id="${esc(x.id)}">${tr("Открыть {0}", icon('arrow'))}</button></div></article>`).join('')}</div>`:`<section class="card empty" style="padding:75px 25px">${icon('book')}<h3>${tr("Здесь живут твои будущие планы")}</h3><p>${tr("Сохрани охоту за дропом, перековку или список ресурсов.")}<br>${tr("Параметры и рецепты останутся в этом блокноте.")}</p><button class="primary" style="margin:22px auto 0" data-action="tab" data-tab="drops">${tr("{0}Спланировать добычу", icon('bag'))}</button></section>`}`;}
+ const cards=state.saved.map(saved=>{
+  const {title,summary}=journalSummary(saved);
+  return `<article class="card saved-card">
+   <div class="section-title"><span class="badge">${tr(tabs.find(t=>t[0]===saved.type)[2])}</span>
+    <button class="icon-button" data-action="delete-saved" data-id="${esc(saved.id)}" aria-label="${tr("Удалить сохранённый план")}">${icon('close')}</button></div>
+   <h2>${esc(title)}</h2><p>${esc(summary)}</p>
+   <div class="saved-card-footer"><span>${formatDate(saved.date,{day:'numeric',month:'long'})}</span>
+    <button class="secondary saved-open" data-action="open-saved" data-id="${esc(saved.id)}">${tr("Открыть {0}", icon('arrow'))}</button></div>
+  </article>`;
+ }).join('');
+ return modes+`<div id="journal-panel"${modes?' role="tabpanel" aria-labelledby="journal-tab-list"':''}>
+  <div class="journal-tools"><p>${state.saved.length?tr("Сохранено планов: {0} из 50", state.saved.length):tr("Любой расчёт можно сохранить кнопкой «Сохранить план».")}</p>
+   <button class="secondary" data-action="export">${tr("{0}Резервная копия", icon('download'))}</button></div>
+  ${cards?`<div class="journal-grid">${cards}</div>`:`<section class="card empty" style="padding:75px 25px">${icon('book')}<h3>${tr("Здесь живут твои будущие планы")}</h3><p>${tr("Сохрани охоту за дропом, перековку или список ресурсов.")}<br>${tr("Параметры и рецепты останутся в этом блокноте.")}</p><button class="primary" style="margin:22px auto 0" data-action="tab" data-tab="drops">${tr("{0}Спланировать добычу", icon('bag'))}</button></section>`}
+ </div>`;
+}
+
+const checklistPlans=new WeakMap();
+function checklistFor(plan){
+ const book=plan.type==='recipeBook'?getRecipeBook():null;
+ const cached=checklistPlans.get(plan);
+ if(cached&&cached.book===book)return cached;
+ const data=plan.data;
+ const production=book?(journalSummary(plan).plan??recipeSummary(data).plan)
+  :planResources(data.recipes,data.targetId,data.quantity,data.inventory,{includeTree:true});
+ const checklist=book?createRecipeChecklist(book,data,production.tree):createPlanChecklist(production.tree);
+ const view={book,checklist,mode:'chain',collapsed:new Set()};
+ checklistPlans.set(plan,view);
+ return view;
+}
+
+function journalChecklist(plan){
+ if(!plan)return `<section class="card card-pad" role="status"><p>${tr("Открой производственный план из списка.")}</p></section>`;
+ const book=getRecipeBook();
+ if(plan.type==='recipeBook'&&!book){
+  const error=recipeCatalogError();
+  if(!error)ensureRecipeCatalog().catch(()=>{});
+  return `<section class="card card-pad" role="status"><h2>${error?tr("Не удалось открыть рецептурную книгу"):tr("Открываем рецептурную книгу…")}</h2>
+   ${error?`<p class="subtitle">${esc(error)}</p><button class="secondary" data-action="recipe-retry">${tr("Повторить")}</button>`:''}</section>`;
+ }
+ const changedSnapshot=plan.type==='recipeBook'&&plan.data.snapshot&&plan.data.snapshot!==recipeCatalogVersion();
+ const warning=changedSnapshot?`<p class="warning">${tr("Снимок каталога изменился. Сверь позиции с расчётом.")}</p>`:'';
+ try{
+  if(plan.type==='recipeBook'&&!book.entitiesByKey.has(plan.data.targetKey))throw Error(tr("Предмет из плана отсутствует в каталоге."));
+  return warning+planChecklistView(plan,checklistFor(plan),{
+   title:journalSummary(plan).title,icon,sampleName,disabled:storageConflict});
+ }catch(error){
+  return `<section class="card card-pad"><p>${esc(error.message)}</p>
+   <button class="secondary" data-action="open-plan-calculation" data-id="${esc(plan.id)}">${tr("К расчёту {0}", icon('arrow'))}</button></section>`;
+ }
+}
 
 function showModal(html){$('#modal').innerHTML=html;$('#modal').showModal();}
 function closeModal(){$('#modal').close();}
@@ -391,12 +472,18 @@ document.addEventListener('change',async e=>{
  if(e.target.id==='interface-language'){
   preferredLanguage=languagePreference(e.target.value);
   storeLanguagePreference(preferredLanguage);
-  updateLanguage();
-  render();
-  $('#interface-language')?.focus({preventScroll:true});
+  await refreshLanguage();
   return;
  }
  const el=e.target;if(['import-file','guide-search','dungeon-search','world-search','drop-search'].includes(el.id))return;if(storageConflict){toast(tr("Сначала открой актуальные данные или экспортируй текущую копию."));return;}
+ if(el.hasAttribute('data-plan-progress')){
+  if(!el.validity.valid||el.value===''){
+   const progress=selectedPlan()?.progress??{};
+   const key=el.dataset.planProgress;
+   el.value=Object.hasOwn(progress,key)?progress[key]:0;
+  }
+  return;
+ }
  try{
   if(el.dataset.dropFilter){
    state.dropBrowser=normalizeDropBrowser({...state.dropBrowser,[el.dataset.dropFilter]:el.value,page:0});
@@ -438,16 +525,24 @@ document.addEventListener('change',async e=>{
   const saving=persist();refresh();await saving;
  }catch(error){toast(error.message);}
 });
-window.addEventListener('languagechange',()=>{if(preferredLanguage==='system'){updateLanguage();refresh();}});
+async function refreshLanguage(){
+ const ready=await updateLanguage();
+ if(ready===undefined)return;
+ const focused=document.activeElement?.id==='interface-language';
+ refresh();
+ if(focused)$('#interface-language')?.focus({preventScroll:true});
+ if(!ready)toast(tr('Перевод BitCraft не загрузился.'));
+}
+window.addEventListener('languagechange',()=>{if(preferredLanguage==='system')void refreshLanguage();});
 window.addEventListener('storage',event=>{
  if(event.key!==LANGUAGE_KEY)return;
  preferredLanguage=languagePreference(event.newValue);
- updateLanguage();
- refresh();
+ void refreshLanguage();
 });
 document.addEventListener('click',async e=>{
  const b=e.target.closest('[data-action]');if(!b||b.disabled)return;
  const a=b.dataset.action,previousTab=state.tab;
+ const previousChecklist=inChecklist();
  const previousDropScroll=a==='drop-target'?b.closest('.drop-results-list')?.scrollTop:0;
  try{
   if(a==='close-modal'){closeModal();return;}
@@ -456,6 +551,24 @@ document.addEventListener('click',async e=>{
   if(a==='web-update'){if(storageConflict)throw Error(tr("Сначала экспортируй текущую копию и открой актуальные данные."));if(!await persist())throw Error(tr("Сначала экспортируй данные: сохранить изменения не удалось."));await applyWebUpdate();return;}
   if(a==='web-download-images'){await prepareOfflineImages();return;}
   if(a==='storage-reload'){const saved=stateStore.read();state=saved?normalize(JSON.parse(saved)):defaults();storageConflict=false;storageAvailable=true;routeInitialized=false;render();toast(tr("Открыты актуальные данные."));return;}
+  if(a==='plan-mode'||a==='plan-branch'){
+   const plan=selectedPlan();
+   const view=plan&&checklistPlans.get(plan);
+   if(!view||!previousChecklist)return;
+   if(a==='plan-mode'){
+    const mode=b.dataset.mode;
+    if(mode!==view.mode){
+     view.mode=mode;
+     $('#journal-panel').innerHTML=journalChecklist(plan);
+     $(`#plan-tab-${mode}`)?.focus({preventScroll:true});
+    }
+   }else{
+    const id=Number(b.dataset.branch);
+    if(!view.collapsed.delete(id))view.collapsed.add(id);
+    updatePlanBranches(b.closest('.plan-checklist'),view.checklist,view.collapsed);
+   }
+   return;
+  }
   if(storageConflict){toast(tr("Сначала открой актуальные данные или экспортируй текущую копию."));return;}
   if(a==='import'){$('#import-file').click();return;}
   if(a==='resource-mode'){
@@ -535,7 +648,14 @@ document.addEventListener('click',async e=>{
   if(a==='recipe-reset'){Object.assign(state.recipeBook,{search:'',tier:'',type:'',rarity:'',showHidden:false,page:0});}
   if(a==='recipe-copy'){const text=recipeCopyText(state.recipeBook);try{await navigator.clipboard.writeText(text);toast(tr("Список материалов скопирован."));}catch{showModal(`<h2>${tr("Список материалов")}</h2><label class="field"><textarea readonly style="height:220px">${esc(text)}</textarea></label><div class="modal-actions"><button class="primary" data-action="close-modal">${tr("Закрыть")}</button></div>`);}return;}
   if(a==='save'){await savePlan(b.dataset.type);return;}
-  if(a==='tab')state.tab=b.dataset.tab;
+  if(a==='tab'){
+   state.tab=b.dataset.tab;
+   if(state.tab==='journal')state.journal.view='list';
+  }
+  if(a==='journal-mode'){
+   if(b.dataset.view===state.journal.view)return;
+   state.journal.view=b.dataset.view;
+  }
   if(a==='step'){setValue(b.dataset.key,Math.max(1,Math.min(10000,getValue(b.dataset.key)+Number(b.dataset.delta))));}
   if(a==='add-cost'){if(state.drop.costs.length>=30){toast(tr("Можно добавить до 30 ресурсов."));return;}state.drop.costs.push({name:tr("Расходник"),amount:1});}
   if(a==='delete-cost')state.drop.costs.splice(Number(b.dataset.index),1);
@@ -555,16 +675,26 @@ document.addEventListener('click',async e=>{
    if(state.dropBrowser.mode!==mode)state.dropBrowser={...dropBrowserDefaults(mode),page:-1};
    state.tab='drops';toast(tr("Время и попытки перенесены в план добычи."));
   }
-  if(a==='delete-saved')state.saved=state.saved.filter(x=>x.id!==b.dataset.id);
-  if(a==='open-saved'){
+  if(a==='delete-saved'){
+   state.saved=state.saved.filter(x=>x.id!==b.dataset.id);
+   if(state.journal.id===b.dataset.id)state.journal={view:'list',id:''};
+  }
+  if(a==='open-saved'||a==='open-plan-calculation'){
    const s=state.saved.find(x=>x.id===b.dataset.id);
-   state[s.type==='drops'?'drop':s.type]=structuredClone(s.data);
-   state.tab=s.type;
-   if(s.type==='resources')state.resourceCatalog.mode='custom';
-   if(s.type==='drops')state.dropBrowser={...dropBrowserDefaults(state.drop.catalogEntry?.group),page:-1};
+   if(!s)return;
+   if(a==='open-saved'&&isProductionPlan(s)){
+    state.tab='journal';
+    state.journal={view:'checklist',id:s.id};
+   }else{
+    state[s.type==='drops'?'drop':s.type]=structuredClone(s.data);
+    state.tab=s.type;
+    if(s.type==='resources')state.resourceCatalog.mode='custom';
+    if(s.type==='drops')state.dropBrowser={...dropBrowserDefaults(state.drop.catalogEntry?.group),page:-1};
+   }
   }
   if(a==='recover'){const d=defaults();if(state.tab==='resources'&&state.resourceCatalog.mode!=='custom')state.resourceCatalog=d.resourceCatalog;else state[state.tab==='drops'?'drop':state.tab]=d[state.tab==='drops'?'drop':state.tab];if(state.tab==='drops')state.dropBrowser=d.dropBrowser;}
-  const focusPageHeading=state.tab!==previousTab&&(['recipeBook','dungeons','world'].includes(state.tab)||a==='resource-target');
+  const focusPageHeading=state.tab!==previousTab&&(['recipeBook','dungeons','world','journal'].includes(state.tab)||a==='resource-target')
+   || (!previousChecklist&&inChecklist());
   const saving=persist();render();
   if(a==='recipe-target'&&b.dataset.method){
    const method=$(`#recipe-acquisition [data-recipe-details="${CSS.escape(b.dataset.method)}"]`);
@@ -589,6 +719,9 @@ document.addEventListener('click',async e=>{
    $(`#world-tab-${state.world.mode}`)?.focus({preventScroll:true});
   }else if(a==='world-reset'){
    $('#world-search')?.focus({preventScroll:true});
+  }else if(a==='journal-mode'){
+   window.scrollTo(0,0);
+   $(inChecklist()?'#journal-tab-checklist':'#journal-tab-list')?.focus({preventScroll:true});
   }else if(focusPageHeading||a==='drop-from-catalog'||(state.tab!==previousTab&&(state.tab==='guide'||['guide','dungeons','world'].includes(previousTab)))){
    window.scrollTo(0,0);
    if(focusPageHeading){
@@ -613,7 +746,7 @@ $('#import-file').addEventListener('change',async e=>{
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('input')&&!e.target.closest('dialog')){e.preventDefault();e.target.blur();}});
 document.addEventListener('keydown',e=>{
- const tab=e.target.closest('[data-action="world-mode"],[data-action="drop-mode"]');
+ const tab=e.target.closest('[data-action="world-mode"],[data-action="drop-mode"],[data-action="journal-mode"],[data-action="plan-mode"]');
  if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
  const buttons=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')];
  let next=buttons.indexOf(tab)+(e.key==='ArrowLeft'?-1:1);
@@ -625,6 +758,21 @@ document.addEventListener('keydown',e=>{
 configureRecipes({refresh,icon,duration});
 configureResources({getBook:getRecipeBook,ensureBook:ensureRecipeCatalog,refresh,persist,icon,duration,entityImage});
 configureGuide({getBook:getRecipeBook,ensureBook:ensureRecipeCatalog,refresh,icon});
+document.addEventListener('input',e=>{
+ const field=e.target;
+ if(!field.matches('[data-plan-progress]')||!inChecklist()||storageConflict||!field.validity.valid)return;
+ const plan=selectedPlan();
+ const key=field.dataset.planProgress;
+ const checklist=plan&&checklistFor(plan).checklist;
+ if(!checklist?.rowsByKey.has(key))return;
+ const progress=plan.progress??={};
+ const value=field.value===''?0:field.valueAsNumber;
+ if(value===(Object.hasOwn(progress,key)?progress[key]:0))return;
+ if(value>0)plan.progress={...progress,[key]:value};
+ else delete progress[key];
+ updatePlanChecklist(field.closest('.plan-checklist'),checklist,plan.progress,field);
+ void persist();
+});
 let recipeSearchTimer, resourceSearchTimer, guideSearchTimer, dropSearchTimer;
 function refreshDropResults(){
  const results=$('#drop-results');
@@ -673,6 +821,7 @@ document.addEventListener('input',e=>{
  persist();
 });
 setInterval(tick,500);
-applyRoute(state,parseRoute(location.hash));
+applyRoute(state,parseRoute(location.hash),history.state);
 render();
+if(!initialLanguageReady)toast(tr('Перевод BitCraft не загрузился.'));
 initWebPlatform(platformChanged);

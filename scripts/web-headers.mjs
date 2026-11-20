@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { catalogLocales, gameLanguageFile } from '../web/catalog-locales.js';
 
 export const securityHeaders = Object.freeze({
   'X-Content-Type-Options': 'nosniff',
@@ -21,10 +22,13 @@ export const compressible = filename => /\.(?:html|js|css|json|svg|webmanifest)$
 export const immutablePath = filename => /^releases\/[a-f0-9]{24}\//.test(filename);
 export const cacheControl = filename => immutablePath(filename) ? 'public, max-age=31536000, immutable' : 'no-cache';
 
+const gameLanguageFiles = new Set(Object.keys(catalogLocales).filter(language => catalogLocales[language].asset).map(gameLanguageFile));
+
 // Deliberately narrow: a project root or arbitrary development file is never a web root.
 export function allowedBrowserPath(filename) {
   return /^(?:index\.html|shell\.html|manifest\.webmanifest|[a-z][a-z0-9-]*\.(?:js|css|svg|ico))$/.test(filename)
     || /^data\/(?:recipe-catalog\.json|catalog-ru\.json|entity-images\.js)$/.test(filename)
+    || gameLanguageFiles.has(filename)
     || /^icons\/[a-zA-Z0-9_-]+\.(?:png|svg|ico)$/.test(filename)
     || /^assets\/bitcraft\/files\/[a-f0-9]{2}\/[a-f0-9]{64}\.webp$/.test(filename);
 }

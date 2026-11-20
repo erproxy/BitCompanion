@@ -168,6 +168,11 @@ async function assertRecipeContrast(page){
   const saved=page.locator('.saved-card').filter({hasText:'Rathium Pickaxe'}).first();
   await saved.waitFor();assert.equal(await saved.count(),1);
   await saved.locator('[data-action="open-saved"]').click();
+  await page.locator('.plan-checklist').waitFor();
+  assert.match(new URL(page.url()).hash, /^#\/plans\/checklist$/);
+  assert.match(await page.locator('.plan-target-row').innerText(),/Rathium Pickaxe/);
+  await page.screenshot({path:'output/plans-recipe-checklist-1420.png'});
+  await page.locator('[data-action="open-plan-calculation"]').click();
   assert.match(await heading(),catalogName('Rathium Pickaxe'));
   assert.equal(await quantity().inputValue(),'10');
   await assertPickaxeChain(10);

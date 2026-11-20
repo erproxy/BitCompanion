@@ -1,4 +1,4 @@
-import { gameSearch, searchable } from './catalog-language.js';
+import { catalogSearchKey, gameSearch, searchable } from './catalog-language.js';
 import { DATA_SNAPSHOT, DROPS } from './domain.js';
 import { DROP_ENTITY_KEYS } from './entity-images.js';
 
@@ -70,7 +70,9 @@ export function normalizeDropEntry(raw) {
 }
 
 function catalogIndex(book) {
-  if (caches.has(book)) return caches.get(book);
+  const language = catalogSearchKey();
+  const previous = caches.get(book);
+  if (previous?.language === language) return previous;
   const groups = Object.fromEntries(Object.keys(DROP_MODES).map(mode => [mode, []]));
   const byId = new Map();
   for (const source of book.catalog.drops?.sources ?? []) {
@@ -96,7 +98,7 @@ function catalogIndex(book) {
   for (const group of Object.values(groups)) group.sort(({ entry: a }, { entry: b }) => (a.sourceTier ?? 101) - (b.sourceTier ?? 101)
     || (a.itemTier ?? 101) - (b.itemTier ?? 101) || order.compare(a.english, b.english) || order.compare(a.sourceName, b.sourceName)
     || order.compare(a.id, b.id));
-  const index = { groups, byId };
+  const index = { language, groups, byId };
   caches.set(book, index);
   return index;
 }

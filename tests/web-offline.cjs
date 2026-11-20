@@ -12,7 +12,7 @@ const {launchBrowser, browserName} = require('./browser-runtime.cjs');
     return;
   }
   const template = await fs.readFile(path.resolve(__dirname, '../web/sw.js'), 'utf8');
-  const modules = new Map(await Promise.all(['web-platform.js', 'i18n.js', 'messages-en.js'].map(async file =>
+  const modules = new Map(await Promise.all(['web-platform.js', 'i18n.js', 'messages-en.js', 'catalog-locales.js'].map(async file =>
     [file, await fs.readFile(path.resolve(__dirname, '../web', file), 'utf8')])));
   const prefix = '/companion/';
   let release = 'one', brokenCore = false, brokenImage = false;
