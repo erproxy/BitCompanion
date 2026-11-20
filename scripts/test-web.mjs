@@ -19,6 +19,7 @@ try{
  console.log(`Testing web release ${release.release} at ${preview.url}`);
  const suites=['ui-smoke','localization-ui','dungeons-ui','web-ui','web-offline'];
  if(!release.publicData) suites.splice(2,0,'drops-ui','recipes-ui','resources-ui','buildings-ui','guide-ui','world-ui');
+ else suites.push('remote-images-ui');
  for(const suite of suites) await run(`tests/${suite}.cjs`,{BASE_URL:preview.url});
  console.log(`PASS: all web UI suites, release ${release.release}`);
 }catch(error){console.error(error.message);process.exitCode=1;}

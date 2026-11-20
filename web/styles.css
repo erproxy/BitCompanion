@@ -434,7 +434,11 @@ dialog .field { margin-bottom: 14px; }
 [data-entity-tier="8"] { --entity-metal: #aaa3db; }
 [data-entity-tier="9"] { --entity-metal: #e2d1a3; }
 [data-entity-tier="10"] { --entity-metal: #9ad0ca; }
-.entity-image img + .entity-image-fallback { display: none; }
+.entity-image-remote { display: inline-grid; grid-template: minmax(0, 1fr) / minmax(0, 1fr); place-items: center; }
+.entity-image-remote > * { grid-area: 1 / 1; }
+.entity-image-remote img:not([data-image-ready]) { opacity: 0; }
+.entity-image img:not([data-remote-src]) + .entity-image-fallback,
+.entity-image img[data-image-ready] + .entity-image-fallback { display: none; }
 .entity-link-content { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; vertical-align: middle; }
 .entity-link-content > span:last-child { overflow-wrap: anywhere; }
 .item-emblem { position: relative; }

@@ -202,3 +202,49 @@ test('encoding negotiation honors q=0, wildcard and explicit identity preference
   assert.equal(normalizeBasePath('/companion'), '/companion/');
   assert.throws(() => normalizeBasePath('/../private'), /Base path/);
 });
+
+test('optional remote illustrations are versioned and restricted to the configured HTTPS origin', async () => {
+  const f = await fixture(); let running;
+  const origin = 'https://images.example.test';
+  const iconPath = path.join(f.root, 'data/public/remote-icons.json');
+  const configuration = { baseUrl: origin + '/bitcraft/', images: { 'item:123': 'tools/axe.webp', 'family:item:567': 'materials/ore.webp' } };
+  const outputRoot = path.join(f.root, 'published');
+  const build = () => buildWeb({ projectRoot: f.root, outputRoot, publicBuild: true });
+  try {
+    const first = await build();
+    assert.equal(first.imageOrigin, undefined);
+    await fs.writeFile(iconPath, JSON.stringify(configuration));
+    const next = await build();
+    assert.notEqual(next.release, first.release);
+    assert.equal(next.imageOrigin, origin);
+    assert.deepEqual(next.imageFiles, []);
+    assert.ok(next.core.every(resource => !resource.includes(origin)));
+    const indexText = await fs.readFile(path.join(outputRoot, next.releaseBase, 'data/entity-images.js'), 'utf8');
+    assert.ok(indexText.includes(JSON.stringify(configuration)), 'the public image mapping is included in the runtime index');
+    assert.equal((await f.build()).imageOrigin, undefined, 'full builds continue to use their local image package');
+
+    running = await createWebServer({ root: outputRoot, port: 0, basePath: '/BitCompanion/' });
+    const document = await request(running.url);
+    assert.ok(document.body.toString().includes("img-src 'self' data: " + origin));
+    assert.ok(document.headers['content-security-policy'].includes("img-src 'self' data: " + origin + ';'));
+    const previous = await request(running.url + first.releaseBase + 'shell.html');
+    assert.ok(!previous.headers['content-security-policy'].includes(origin));
+    assert.equal((await request(running.url + 'data/public/remote-icons.json')).status, 404);
+
+    const invalidSources = [
+      { ...configuration, baseUrl: 'http://images.example.test/bitcraft/' },
+      { ...configuration, baseUrl: 'https://*.example.test/bitcraft/' },
+      { ...configuration, baseUrl: 'https://reader:secret@images.example.test/' },
+      { ...configuration, images: { 'item:123': 'https://images.example.test/bitcraft/axe.webp' } },
+      { ...configuration, images: { 'item:123': '//unrelated.example/axe.webp' } },
+      { ...configuration, images: { 'item:123': '../axe.webp' } },
+      { ...configuration, images: { 'item:123': 'axe.webp#invalid' } },
+      { ...configuration, images: { '__ignored__': 'axe.webp' } }
+    ];
+    for (const invalid of invalidSources) {
+      await fs.writeFile(iconPath, JSON.stringify(invalid));
+      await assert.rejects(build(), /remote-icons\.json/);
+    }
+    assert.equal(JSON.parse(await fs.readFile(path.join(outputRoot, 'release.json'))).release, next.release);
+  } finally { if (running) await running.close(); await f.cleanup(); }
+});

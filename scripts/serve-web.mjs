@@ -5,7 +5,7 @@ import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { buildWeb } from './build-web.mjs';
-import { allowedBrowserPath, cacheControl, chooseEncoding, mimeType, securityHeaders } from './web-headers.mjs';
+import { allowedBrowserPath, cacheControl, chooseEncoding, mimeType, releaseSecurityHeaders, securityHeaders } from './web-headers.mjs';
 
 const here = fileURLToPath(import.meta.url);
 const projectRoot = path.resolve(path.dirname(here), '..');
@@ -23,7 +23,7 @@ async function publicFiles(root) {
   // A release manifest is mandatory: serving the repository by accident is refused.
   const current = JSON.parse(await fs.readFile(path.join(root, 'release.json'), 'utf8'));
   if (current.formatVersion !== 1 || !/^[a-f0-9]{24}$/.test(current.release)) throw new Error('Not a built BitCraft web directory.');
-  const files = new Set(['index.html', 'sw.js', 'release.json']);
+  const files = new Map(['index.html', 'sw.js', 'release.json'].map(name => [name, securityHeaders]));
   let foundCurrent = false;
   const releaseRoot = path.join(root, 'releases');
   for (const entry of await fs.readdir(releaseRoot, { withFileTypes: true })) {
@@ -33,12 +33,16 @@ async function publicFiles(root) {
     catch (error) { if (error.code === 'ENOENT' && entry.name !== current.release) continue; throw error; }
     if (metadata.release !== entry.name || metadata.releaseBase !== `releases/${entry.name}/` || !Array.isArray(metadata.files))
       throw new Error(`Invalid release manifest: ${entry.name}`);
+    const releaseHeaders = releaseSecurityHeaders(metadata.imageOrigin);
     for (const file of metadata.files) {
       if (!allowedBrowserPath(file.path) || file.path === 'sw.js' || !/^[a-f0-9]{64}$/.test(file.sha256) || !Number.isSafeInteger(file.bytes) || file.bytes < 0)
         throw new Error(`Invalid public asset: ${file.path}`);
-      files.add(metadata.releaseBase + file.path);
+      files.set(metadata.releaseBase + file.path, releaseHeaders);
     }
-    if (entry.name === current.release) foundCurrent = true;
+    if (entry.name === current.release) {
+      files.set('index.html', releaseHeaders);
+      foundCurrent = true;
+    }
   }
   if (!foundCurrent) throw new Error('The current web release is incomplete. Rebuild before starting preview.');
   return files;
@@ -80,7 +84,9 @@ export async function createWebServer({ root = path.join(projectRoot, 'dist-web'
       const requested = pathname.slice(basePath.length);
       // The root and index.html can still be controlled by an earlier offline release.
       const relative = !requested || requested === onlineEntry ? 'index.html' : requested;
-      if (!allowed.has(relative)) return end(404, 'Not Found');
+      const releaseHeaders = allowed.get(relative);
+      if (!releaseHeaders) return end(404, 'Not Found');
+      Object.assign(headers, releaseHeaders);
       const filename = path.join(root, relative);
       const stat = await fs.stat(filename);
       if (!stat.isFile()) return end(404, 'Not Found');

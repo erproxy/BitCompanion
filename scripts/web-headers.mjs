@@ -29,8 +29,21 @@ export function allowedBrowserPath(filename) {
     || /^assets\/bitcraft\/files\/[a-f0-9]{2}\/[a-f0-9]{64}\.webp$/.test(filename);
 }
 
-export function staticHostHeaders() {
-  const common = Object.entries(securityHeaders).map(([name, value]) => `  ${name}: ${value}`).join('\n');
+export function isHttpsImageOrigin(value) {
+  return typeof value === 'string' && /^https:\/\/(?:[a-z0-9.-]+|\[[a-f0-9:]+\])(?::\d+)?$/i.test(value);
+}
+
+export function releaseSecurityHeaders(imageOrigin) {
+  if (!imageOrigin) return securityHeaders;
+  if (!isHttpsImageOrigin(imageOrigin) || new URL(imageOrigin).origin !== imageOrigin) throw new Error('Invalid release image origin.');
+  return {
+    ...securityHeaders,
+    'Content-Security-Policy': securityHeaders['Content-Security-Policy'].replace("img-src 'self' data:;", `img-src 'self' data: ${imageOrigin};`)
+  };
+}
+
+export function staticHostHeaders(imageOrigin) {
+  const common = Object.entries(releaseSecurityHeaders(imageOrigin)).map(([name, value]) => `  ${name}: ${value}`).join('\n');
   return `# Apply these rules at the application's mount path if deployed in a subdirectory.\n/*\n${common}\n  Cache-Control: no-cache\n\n/releases/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/sw.js\n  Cache-Control: no-cache\n`;
 }
 

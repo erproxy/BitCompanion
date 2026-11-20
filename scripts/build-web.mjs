@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
-import { allowedBrowserPath, compressible, staticHostHeaders } from './web-headers.mjs';
+import { allowedBrowserPath, compressible, isHttpsImageOrigin, staticHostHeaders } from './web-headers.mjs';
 
 const here = fileURLToPath(import.meta.url);
 const defaultProjectRoot = path.resolve(path.dirname(here), '..');
@@ -48,7 +48,7 @@ async function writeFile(filename, bytes, immutable = false, safeRoot) {
   } finally { await fs.rm(temporary, { force: true }); }
 }
 
-function rootHtml(source, prefix) {
+function rootHtml(source, prefix, imageOrigin) {
   let html = source.replace(/\b(href|src)=(['"])([^'"<>]+)\2/g, (all, attribute, quote, value) => {
     if (/^(?:[a-z]+:|\/|#)/i.test(value)) return all;
     const relative = value.replace(/^\.\//, '');
@@ -57,6 +57,8 @@ function rootHtml(source, prefix) {
   });
   if (!/<link\b[^>]*\brel=['"]manifest['"]/i.test(html))
     html = html.replace('</head>', `  <link rel="manifest" href="./${prefix}manifest.webmanifest">\n</head>`);
+  if (imageOrigin)
+    html = html.replace('</head>', `  <meta http-equiv="Content-Security-Policy" content="img-src 'self' data: ${imageOrigin}">\n</head>`);
   return html;
 }
 
@@ -72,12 +74,43 @@ function presetImageFiles(sources) {
   return [...new Set(keys.map(key => index.images?.[key]?.file).filter(Boolean).map(file => 'assets/bitcraft/' + file))].sort();
 }
 
-function compactImageIndex(bytes) {
+function parseUrl(value, base) {
+  try { return new URL(value, base); } catch { return null; }
+}
+
+async function readRemoteIcons(projectRoot) {
+  const filename = path.join(projectRoot, 'data/public/remote-icons.json');
+  let manifest;
+  try { manifest = JSON.parse(await fs.readFile(filename, 'utf8')); }
+  catch (error) {
+    if (error.code === 'ENOENT') return null;
+    if (error instanceof SyntaxError) throw new Error('Invalid JSON in data/public/remote-icons.json.');
+    throw error;
+  }
+  const base = typeof manifest?.baseUrl === 'string' && parseUrl(manifest.baseUrl);
+  if (!base || !isHttpsImageOrigin(base.origin) || base.username || base.password || base.search || base.hash || !base.pathname.endsWith('/'))
+    throw new Error('remote-icons.json requires an HTTPS baseUrl ending in / without credentials, a query or a fragment.');
+  if (!manifest.images || typeof manifest.images !== 'object' || Array.isArray(manifest.images))
+    throw new Error('remote-icons.json requires an images object keyed by catalog entity.');
+
+  const images = Object.create(null);
+  for (const [key, file] of Object.entries(manifest.images)) {
+    if (!/^(?:[a-z]+:){1,2}-?\d+$/.test(key)) throw new Error('Invalid entity key in remote-icons.json.');
+    const image = typeof file === 'string' && file && !/^[a-z][a-z0-9+.-]*:/i.test(file) && !/^[\\/]|[\u0000-\u0020\\]/.test(file) && parseUrl(file, base);
+    if (!image || image.origin !== base.origin || image.username || image.password || image.hash ||
+        !image.pathname.startsWith(base.pathname) || image.pathname === base.pathname)
+      throw new Error(`Invalid relative image path for ${key} in remote-icons.json.`);
+    images[key] = image.href.slice(base.href.length);
+  }
+  return Object.keys(images).length ? { baseUrl: base.href, images } : null;
+}
+
+function compactImageIndex(bytes, remote) {
   const json = bytes.toString().match(/export const entityImageIndex\s*=\s*([\s\S]*?);?\s*$/)?.[1]?.replace(/;$/, '');
   if (!json) throw new Error('Cannot read generated entity image index.');
   const index = JSON.parse(json);
   if (!index.images || typeof index.images !== 'object') throw new Error('Image bindings are missing from generated index.');
-  return Buffer.from('// Runtime projection; integrity metadata remains in the source package.\nexport const entityImageIndex=' + JSON.stringify({ images: index.images }) + ';\n');
+  return Buffer.from('// Runtime projection; integrity metadata remains in the source package.\nexport const entityImageIndex=' + JSON.stringify({ images: index.images, ...(remote ? { remote } : {}) }) + ';\n');
 }
 
 async function rejectOutputLinks(projectRoot, outputRoot) {
@@ -132,8 +165,10 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
   }
   if (!sources.has('data/entity-images.js')) sources.set('data/entity-images.js', noGameImages);
   const packageInfo = JSON.parse(await fs.readFile(path.join(projectRoot, 'package.json'), 'utf8'));
+  const remote = publicData ? await readRemoteIcons(projectRoot) : null;
+  const imageOrigin = remote ? new URL(remote.baseUrl).origin : undefined;
   const files = new Map(sources); files.delete('sw.js');
-  if (files.has('data/entity-images.js')) files.set('data/entity-images.js', compactImageIndex(files.get('data/entity-images.js')));
+  files.set('data/entity-images.js', compactImageIndex(sources.get('data/entity-images.js'), remote));
   const manifest = JSON.parse(files.get('manifest.webmanifest').toString());
   manifest.id = '../../'; manifest.start_url = '../../'; manifest.scope = '../../';
   files.set('manifest.webmanifest', Buffer.from(JSON.stringify(manifest, null, 2) + '\n'));
@@ -146,7 +181,7 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
   const release = contentHash.digest('hex').slice(0, 24);
   const releaseBase = `releases/${release}/`;
   files.set('runtime-config.js', Buffer.from(`// Generated web release configuration.\nexport const runtimeConfig=Object.freeze({release:${JSON.stringify(release)},assetBase:new URL('./',import.meta.url).href});\nexport const appBase=new URL('../../',import.meta.url).href;\nexport const assetUrl=path=>new URL(path,runtimeConfig.assetBase).href;\n`));
-  const html = rootHtml(files.get('index.html').toString(), releaseBase);
+  const html = rootHtml(files.get('index.html').toString(), releaseBase, imageOrigin);
   files.set('shell.html', Buffer.from(html));
   const presets = new Set(presetImageFiles(sources));
   for (const name of presets) if (!files.has(name)) throw new Error(`Missing offline preset image: ${name}`);
@@ -172,7 +207,7 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
     await write(releaseBase + name, bytes, true);
     assets.push({ path: name, bytes: bytes.length, sha256: hash(bytes) });
   }
-  const releaseManifest = { formatVersion: 1, version: packageInfo.version, release, releaseBase, publicData, files: assets };
+  const releaseManifest = { formatVersion: 1, version: packageInfo.version, release, releaseBase, publicData, ...(imageOrigin ? { imageOrigin } : {}), files: assets };
   await writeFile(path.join(outputRoot, releaseBase, 'asset-manifest.json'), JSON.stringify(releaseManifest, null, 2) + '\n', true, projectRoot);
   const sw = Buffer.from(`// Generated release constants. URLs are relative to the service worker scope.\nconst RELEASE=${JSON.stringify(release)};\nconst RELEASE_BASE=${JSON.stringify(releaseBase)};\nconst CORE=${JSON.stringify(core)};\nconst IMAGE_FILES=${JSON.stringify(imageFiles)};\n` + sources.get('sw.js').toString());
   // Immutable release resources are complete before the mutable entry points change.
@@ -180,7 +215,7 @@ export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = 
   await write('sw.js', sw);
   const metadata = { ...releaseManifest, core, imageFiles };
   await write('release.json', Buffer.from(JSON.stringify(metadata, null, 2) + '\n'));
-  await writeFile(path.join(outputRoot, '_headers'), staticHostHeaders(), false, projectRoot);
+  await writeFile(path.join(outputRoot, '_headers'), staticHostHeaders(imageOrigin), false, projectRoot);
   return { ...metadata, outputRoot };
 }
 
