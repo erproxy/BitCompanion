@@ -1,0 +1,2253 @@
+{
+  "formatVersion": 1,
+  "source": {
+    "repository": "BitCraftToolBox/BitCraft_GameData",
+    "repositoryUrl": "https://github.com/BitCraftToolBox/BitCraft_GameData",
+    "branch": "cereal/cs",
+    "commit": "af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f",
+    "commitUrl": "https://github.com/BitCraftToolBox/BitCraft_GameData/commit/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f",
+    "committedAt": "2026-11-13T14:34:19Z",
+    "commitMessage": "Update game data: 2026-11-13",
+    "archiveUrl": "https://codeload.github.com/BitCraftToolBox/BitCraft_GameData/tar.gz/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f",
+    "archiveSha256": "c13b4aaf67b428f31fb0801bd7f3903246834ca40cf55c54233b6f9dc9f28c9e"
+  },
+  "downloadedAt": "2026-11-14T01:34:44Z",
+  "scope": "All static/*.json files and region_schema.json from one pinned upstream commit; no live player data or image files.",
+  "validation": "JSON parsed; table arrays and unique id fields checked; required recipe/reference tables present; per-file SHA-256 recorded. Gameplay parity is not verified.",
+  "license": "No license grant is inferred for game data or assets. See upstream terms; BitCraftPublic's code license is separate.",
+  "tableCount": 111,
+  "totalRows": 52074,
+  "totalBytes": 42099184,
+  "tables": [
+    {
+      "table": "ability_custom_desc",
+      "path": "raw/static/ability_custom_desc.json",
+      "bytes": 6689,
+      "sha256": "98cae3a8819114db457adc29b328c57b86cade2ee625a8ff2859e7cfb49a0792",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/ability_custom_desc.json",
+      "rows": 8,
+      "fields": [
+        "ability_name",
+        "animation",
+        "buff_toggle",
+        "buffs",
+        "cast_time",
+        "consume_required_buff",
+        "cooldown",
+        "damage",
+        "description",
+        "friendly",
+        "global_cooldown",
+        "health_cost",
+        "icon_path",
+        "id",
+        "input_item_stacks",
+        "linked_ability_buff_desc_id",
+        "output_item_stacks",
+        "perform_profession_hit",
+        "profession_hit_bonus_damage",
+        "profession_hit_skill_id",
+        "radius",
+        "range",
+        "required_buff_ids",
+        "spawned_placeables",
+        "stamina_cost",
+        "threat_value"
+      ]
+    },
+    {
+      "table": "ability_unlock_desc",
+      "path": "raw/static/ability_unlock_desc.json",
+      "bytes": 27271,
+      "sha256": "aa2e12082151c001202ad4e1d31a0a9c46e450052f42122776e68b0d7a937ba7",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/ability_unlock_desc.json",
+      "rows": 80,
+      "fields": [
+        "ability_data",
+        "ability_type_enum_id",
+        "blocking_knowledges",
+        "id",
+        "level_requirements",
+        "required_claim_tech_id",
+        "required_knowledges",
+        "show_in_progression"
+      ]
+    },
+    {
+      "table": "achievement_desc",
+      "path": "raw/static/achievement_desc.json",
+      "bytes": 112950,
+      "sha256": "bef5e45133655b5314ff6312e8c0282d86c8a11aa261318087d337250cafade8",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/achievement_desc.json",
+      "rows": 254,
+      "fields": [
+        "cargo_disc",
+        "chunks_discovered",
+        "collectible_rewards",
+        "crafting_disc",
+        "description",
+        "id",
+        "item_disc",
+        "name",
+        "pct_chunks_discovered",
+        "points_reward",
+        "requisites",
+        "resource_disc",
+        "skill_id",
+        "skill_level"
+      ]
+    },
+    {
+      "table": "alert_desc",
+      "path": "raw/static/alert_desc.json",
+      "bytes": 2647,
+      "sha256": "d631eeb3d5621a4f6ccb7532d0769a51703a286e2f0fe460f9177de927bc2a9f",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/alert_desc.json",
+      "rows": 11,
+      "fields": [
+        "alert_type",
+        "body",
+        "duration",
+        "header",
+        "show_timer"
+      ]
+    },
+    {
+      "table": "biome_desc",
+      "path": "raw/static/biome_desc.json",
+      "bytes": 6382,
+      "sha256": "03a86576066b7491b89dd5702c5f61742b79699b1549aeb2571484818a32ac5b",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/biome_desc.json",
+      "rows": 19,
+      "fields": [
+        "biome_type",
+        "description",
+        "disallow_player_build",
+        "hazard_level",
+        "icon_address",
+        "name"
+      ]
+    },
+    {
+      "table": "buff_desc",
+      "path": "raw/static/buff_desc.json",
+      "bytes": 172130,
+      "sha256": "6022dae1a2eb34e8d5f235c8f65356b2c10ccc14a1648d9cb14313257e00c76d",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/buff_desc.json",
+      "rows": 374,
+      "fields": [
+        "beneficial",
+        "buff_type_id",
+        "description",
+        "duration",
+        "icon_asset_name",
+        "id",
+        "online_timestamp",
+        "priority",
+        "stats",
+        "vfx",
+        "vfx_attachment_point",
+        "warn_time"
+      ]
+    },
+    {
+      "table": "buff_type_desc",
+      "path": "raw/static/buff_type_desc.json",
+      "bytes": 6893,
+      "sha256": "e561d54203511d4c89efe3bbbac2454b25e9e84181288ddd5b364656609d57bf",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/buff_type_desc.json",
+      "rows": 88,
+      "fields": [
+        "category",
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "building_buff_desc",
+      "path": "raw/static/building_buff_desc.json",
+      "bytes": 4492,
+      "sha256": "80d5bffe508ee2b8b89eeadf3fd286e41c3671636b295b4eba99828e09bc1475",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_buff_desc.json",
+      "rows": 24,
+      "fields": [
+        "buffs",
+        "building_id",
+        "empire_currency_cost",
+        "id"
+      ]
+    },
+    {
+      "table": "building_claim_desc",
+      "path": "raw/static/building_claim_desc.json",
+      "bytes": 6785,
+      "sha256": "08a45c450a31b29fc1a1370931e07fdf250d725b24d428612b3510660835e4d6",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_claim_desc.json",
+      "rows": 69,
+      "fields": [
+        "building_id",
+        "claim_type",
+        "radius",
+        "tier"
+      ]
+    },
+    {
+      "table": "building_desc",
+      "path": "raw/static/building_desc.json",
+      "bytes": 2859334,
+      "sha256": "d71b7060f05af6397c31aa093c05630c0a97b93b0c7d50afffac05dcc8bde946",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_desc.json",
+      "rows": 1139,
+      "fields": [
+        "build_permission",
+        "decay",
+        "defense_level",
+        "description",
+        "destroy_on_unclaim",
+        "footprint",
+        "functions",
+        "has_action",
+        "icon_asset_name",
+        "id",
+        "ignore_damage",
+        "interact_permission",
+        "is_ruins",
+        "light_radius",
+        "maintenance",
+        "max_health",
+        "model_asset_name",
+        "name",
+        "not_deconstructible",
+        "rested_buff_duration",
+        "show_in_compendium",
+        "unenterable",
+        "wilderness"
+      ]
+    },
+    {
+      "table": "building_function_type_mapping_desc",
+      "path": "raw/static/building_function_type_mapping_desc.json",
+      "bytes": 19828,
+      "sha256": "e58eab3912bc76ca4485d48e4cf4a9d21d5ae7e8c048e0761910efc683302ba8",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_function_type_mapping_desc.json",
+      "rows": 63,
+      "fields": [
+        "desc_ids",
+        "type_id"
+      ]
+    },
+    {
+      "table": "building_map_icon_desc",
+      "path": "raw/static/building_map_icon_desc.json",
+      "bytes": 4418,
+      "sha256": "e5e434a02b61728af82666ad3492f194dde8a7fefb14e92abe831b4eee0d6ddc",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_map_icon_desc.json",
+      "rows": 17,
+      "fields": [
+        "building_id",
+        "icon_address",
+        "text",
+        "title"
+      ]
+    },
+    {
+      "table": "building_portal_desc",
+      "path": "raw/static/building_portal_desc.json",
+      "bytes": 20694,
+      "sha256": "4421ab4cf426eae7a6507c5e05ebd84ba6c4a0f87f55825c17882c1df1b6fe6b",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_portal_desc.json",
+      "rows": 113,
+      "fields": [
+        "allow_deployables",
+        "building_id",
+        "enemy_lock",
+        "id",
+        "name",
+        "pos_x",
+        "pos_z"
+      ]
+    },
+    {
+      "table": "building_repairs_desc",
+      "path": "raw/static/building_repairs_desc.json",
+      "bytes": 3818,
+      "sha256": "7a573655999c0e21f74b32c2d8e3801df98237d378ce6992f2470323d5f2cd15",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_repairs_desc.json",
+      "rows": 64,
+      "fields": [
+        "cargo_id",
+        "repair_value"
+      ]
+    },
+    {
+      "table": "building_spawn_desc",
+      "path": "raw/static/building_spawn_desc.json",
+      "bytes": 570520,
+      "sha256": "29f92e2e78d165208072d3252daad7dab0b99b169bf7eb48f3f0448170206f2f",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_spawn_desc.json",
+      "rows": 1988,
+      "fields": [
+        "building_id",
+        "direction",
+        "enemy_type",
+        "id",
+        "respawn_time_max",
+        "respawn_time_min",
+        "spawn_ids",
+        "spawn_type",
+        "traveler_type",
+        "x",
+        "z"
+      ]
+    },
+    {
+      "table": "building_type_desc",
+      "path": "raw/static/building_type_desc.json",
+      "bytes": 8823,
+      "sha256": "844a0395bcad2a3d7580a41da7db235a90eb5059bf90109d5452af4c924b9310",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/building_type_desc.json",
+      "rows": 75,
+      "fields": [
+        "actions",
+        "category",
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "cargo_desc",
+      "path": "raw/static/cargo_desc.json",
+      "bytes": 620773,
+      "sha256": "23018d11864082568ecbbc15249c3548a769e77beeb47840aad56a4507d8c5d1",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/cargo_desc.json",
+      "rows": 677,
+      "fields": [
+        "animator_state",
+        "blocks_path",
+        "cannot_store_in_buildings",
+        "cannot_store_in_deployables",
+        "carried_model_asset_name",
+        "description",
+        "despawn_time",
+        "drop_animation_end",
+        "drop_animation_start",
+        "icon_asset_name",
+        "id",
+        "model_asset_name",
+        "movement_modifier",
+        "name",
+        "not_pickupable",
+        "on_destroy_yield_cargos",
+        "pick_up_animation_end",
+        "pick_up_animation_start",
+        "pick_up_time",
+        "place_time",
+        "rarity",
+        "secondary_knowledge_id",
+        "tag",
+        "tier",
+        "volume"
+      ]
+    },
+    {
+      "table": "character_stat_desc",
+      "path": "raw/static/character_stat_desc.json",
+      "bytes": 15612,
+      "sha256": "9270f970ed96d5a6a89bb28a05653396ae306d24960e0e0fa3ea8a02e5664b46",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/character_stat_desc.json",
+      "rows": 86,
+      "fields": [
+        "desc",
+        "max_value",
+        "min_value",
+        "name",
+        "stat_type",
+        "suffix",
+        "value"
+      ]
+    },
+    {
+      "table": "chest_rarity_desc",
+      "path": "raw/static/chest_rarity_desc.json",
+      "bytes": 3495,
+      "sha256": "df09e999fcc51c9411e1001ce095ae80827eec045a1744e1ef681aaef6b1e045",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/chest_rarity_desc.json",
+      "rows": 16,
+      "fields": [
+        "id",
+        "loot_rarities",
+        "name"
+      ]
+    },
+    {
+      "table": "claim_tech_desc",
+      "path": "raw/static/claim_tech_desc.json",
+      "bytes": 109001,
+      "sha256": "86db718022c51644796a3db2c3366946dc2a42bd96897a9528d2b2aeb7116916",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/claim_tech_desc.json",
+      "rows": 166,
+      "fields": [
+        "area",
+        "blocking_claim_techs",
+        "cannot_be_researched",
+        "description",
+        "id",
+        "input",
+        "members",
+        "name",
+        "not_shown_in_ui",
+        "requirements",
+        "research_time",
+        "supplies",
+        "supplies_cost",
+        "tech_type",
+        "tier",
+        "unlocks_techs",
+        "xp_to_mint_hex_coin"
+      ]
+    },
+    {
+      "table": "claim_tile_cost",
+      "path": "raw/static/claim_tile_cost.json",
+      "bytes": 596,
+      "sha256": "0190405776e070f4f514d3d028deccbebeb452a46fbc89a06fc75d6a070aa8a5",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/claim_tile_cost.json",
+      "rows": 10,
+      "fields": [
+        "cost_per_tile",
+        "tile_count"
+      ]
+    },
+    {
+      "table": "climb_requirement_desc",
+      "path": "raw/static/climb_requirement_desc.json",
+      "bytes": 2392,
+      "sha256": "4bf3017c3aa910cd7fad57749687af8f529e3cdc3545d14eb57328da0c0507ef",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/climb_requirement_desc.json",
+      "rows": 18,
+      "fields": [
+        "id",
+        "max_elevation",
+        "min_climb_proficiency",
+        "min_elevation",
+        "stamina_cost"
+      ]
+    },
+    {
+      "table": "clothing_desc",
+      "path": "raw/static/clothing_desc.json",
+      "bytes": 20643,
+      "sha256": "fc96585ea0a958e1d4e1d9aa1cae3d2e9f395fc4e1aaae7023347d78f96ef98e",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/clothing_desc.json",
+      "rows": 348,
+      "fields": [
+        "item_id",
+        "mask"
+      ]
+    },
+    {
+      "table": "collectible_desc",
+      "path": "raw/static/collectible_desc.json",
+      "bytes": 1810392,
+      "sha256": "78b79d49a95ba9040ebc8e994d79fce8a5061b867f04f42fb58d93d4738cc662",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/collectible_desc.json",
+      "rows": 2711,
+      "fields": [
+        "auto_collect",
+        "collectible_rarity",
+        "collectible_type",
+        "color",
+        "description",
+        "display_string",
+        "emission",
+        "icon_asset_name",
+        "id",
+        "invalidates_type",
+        "item_deed_id",
+        "locked",
+        "max_equip_count",
+        "model_asset_name",
+        "name",
+        "required_knowledges_to_convert",
+        "required_knowledges_to_use",
+        "starting_loadout",
+        "tag",
+        "variant",
+        "variant_material"
+      ]
+    },
+    {
+      "table": "combat_action_desc",
+      "path": "raw/static/combat_action_desc.json",
+      "bytes": 62896,
+      "sha256": "9a616c92686762b6cf4228ec61011c94737bf2089255d6b55e510ded1549a017",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/combat_action_desc.json",
+      "rows": 56,
+      "fields": [
+        "accuracy_multiplier",
+        "auto_cast",
+        "base_threat",
+        "can_move_during_lead_in",
+        "cooldown",
+        "description",
+        "global_cooldown",
+        "hit_vfx",
+        "icon_asset_name",
+        "id",
+        "ignore_global_cooldown",
+        "inaction_time",
+        "is_self_targeting",
+        "is_taunt_action",
+        "lead_in_time",
+        "learned_by_player",
+        "level_requirement",
+        "max_range",
+        "name",
+        "npc_animation_name",
+        "player_animation_id",
+        "projectile_speed",
+        "projectile_vfx",
+        "range",
+        "self_buffs",
+        "self_threat_against_buildings",
+        "self_threat_against_enemies",
+        "stamina_use",
+        "strength_multiplier",
+        "target_buffs",
+        "threat_per_damage",
+        "weapon_durability_lost",
+        "weapon_type_requirements"
+      ]
+    },
+    {
+      "table": "combat_action_multi_hit_desc",
+      "path": "raw/static/combat_action_multi_hit_desc.json",
+      "bytes": 1540,
+      "sha256": "98c8279584cacf5686e942c280a0119346edfadb3267aa76c302d2e0f522d8ac",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/combat_action_multi_hit_desc.json",
+      "rows": 12,
+      "fields": [
+        "area_footprint",
+        "id",
+        "max_secondary_targets",
+        "secondary_target_multiplier"
+      ]
+    },
+    {
+      "table": "construction_recipe_desc",
+      "path": "raw/static/construction_recipe_desc.json",
+      "bytes": 1086080,
+      "sha256": "b614012a096e5d2fc442a429987cbb257eaa7b794bc76b686b6f8418f74a8702",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/construction_recipe_desc.json",
+      "rows": 876,
+      "fields": [
+        "actions_required",
+        "building_description_id",
+        "consumed_building",
+        "consumed_cargo_stacks",
+        "consumed_item_stacks",
+        "consumed_shards",
+        "discovery_triggers",
+        "experience_per_progress",
+        "full_discovery_score",
+        "id",
+        "instantly_built",
+        "level_requirements",
+        "name",
+        "recipe_performance_id",
+        "required_claim_tech_ids",
+        "required_interior_tier",
+        "required_knowledges",
+        "required_paving_tier",
+        "stamina_requirement",
+        "time_requirement",
+        "tool_mesh_index",
+        "tool_requirements"
+      ]
+    },
+    {
+      "table": "contribution_loot_desc",
+      "path": "raw/static/contribution_loot_desc.json",
+      "bytes": 6494,
+      "sha256": "1b1de8c79b0bc4b90baa5a8194b6f436d924093325e58e6979fa540ee33c2951",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/contribution_loot_desc.json",
+      "rows": 46,
+      "fields": [
+        "enemy_type_id",
+        "id",
+        "item_list_id",
+        "minimum_contribution",
+        "weighted"
+      ]
+    },
+    {
+      "table": "crafting_recipe_desc",
+      "path": "raw/static/crafting_recipe_desc.json",
+      "bytes": 11880865,
+      "sha256": "dbf345f28ce56b836a60986853fe4fc866799af92db3b9b8afcbe2392a4a91df",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/crafting_recipe_desc.json",
+      "rows": 7921,
+      "fields": [
+        "actions_required",
+        "allow_use_hands",
+        "blocking_knowledges",
+        "building_requirement",
+        "consumed_item_stacks",
+        "crafted_item_stacks",
+        "discovery_triggers",
+        "experience_per_progress",
+        "full_discovery_score",
+        "hide_with_blocking_knowledges",
+        "hide_without_required_knowledge",
+        "id",
+        "is_passive",
+        "level_requirements",
+        "name",
+        "recipe_performance_id",
+        "required_claim_tech_id",
+        "required_knowledges",
+        "self_buffs",
+        "show_in_progression",
+        "stamina_requirement",
+        "time_requirement",
+        "tool_durability_lost",
+        "tool_mesh_index",
+        "tool_requirements"
+      ]
+    },
+    {
+      "table": "deconstruction_recipe_desc",
+      "path": "raw/static/deconstruction_recipe_desc.json",
+      "bytes": 600889,
+      "sha256": "ec8422f464f55296f36ce13376263aa864cf44fca7cb4f96e69065c4f93061e0",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/deconstruction_recipe_desc.json",
+      "rows": 774,
+      "fields": [
+        "consumed_building",
+        "experience_per_progress",
+        "id",
+        "level_requirements",
+        "output_cargo_id",
+        "output_item_stacks",
+        "recipe_performance_id",
+        "time_requirement",
+        "tool_mesh_index",
+        "tool_requirements"
+      ]
+    },
+    {
+      "table": "deployable_appearance_override_desc",
+      "path": "raw/static/deployable_appearance_override_desc.json",
+      "bytes": 8819,
+      "sha256": "ac7e163b11ac42c87add03c4171866bc08be798d583cdf78d4d7cc6ab85b3521",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/deployable_appearance_override_desc.json",
+      "rows": 26,
+      "fields": [
+        "affected_model_address",
+        "affected_model_addresses",
+        "collectible_id",
+        "icon_asset_name",
+        "id",
+        "model_address"
+      ]
+    },
+    {
+      "table": "deployable_desc",
+      "path": "raw/static/deployable_desc.json",
+      "bytes": 58680,
+      "sha256": "29b7ec9d7378827dd9b53992c75164389426e1d5a1b6f5498a00e8c6052e3c7a",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/deployable_desc.json",
+      "rows": 39,
+      "fields": [
+        "affected_by_wind",
+        "allow_driver_extract",
+        "allow_emote_while_driver",
+        "allow_emote_while_passenger",
+        "allow_hunting",
+        "allow_passenger_extract",
+        "barter",
+        "can_auto_follow",
+        "can_enter_portals",
+        "capacity",
+        "cargo_slot_size",
+        "deploy_from_collectible_id",
+        "deploy_time",
+        "deployable_type",
+        "experience_per_progress",
+        "id",
+        "item_slot_size",
+        "model_address",
+        "mounting_radius",
+        "movement_type",
+        "name",
+        "pathfinding_id",
+        "placeable_in_water",
+        "placeable_on_land",
+        "player_animations_in_deployable_slots",
+        "radius",
+        "show_for_secs_after_owner_logout",
+        "speed",
+        "stats",
+        "stockpile",
+        "storage",
+        "use_player_speed_modifier"
+      ]
+    },
+    {
+      "table": "distant_visible_entity_desc",
+      "path": "raw/static/distant_visible_entity_desc.json",
+      "bytes": 1030,
+      "sha256": "af6380d036b9dd8f7d8431339f6992dad7aa2abb14ab8accaa185f6849932559",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/distant_visible_entity_desc.json",
+      "rows": 11,
+      "fields": [
+        "description_id",
+        "entity_type",
+        "id"
+      ]
+    },
+    {
+      "table": "elevator_desc",
+      "path": "raw/static/elevator_desc.json",
+      "bytes": 314,
+      "sha256": "23e387a291d6a86c63204426e8f2b141b685175acd5b91756378c765d7a3c162",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/elevator_desc.json",
+      "rows": 1,
+      "fields": [
+        "basket_address",
+        "bottom_platform_address",
+        "building_id",
+        "max_cliff_height",
+        "speed",
+        "top_platform_address",
+        "usable_with_deployable"
+      ]
+    },
+    {
+      "table": "emote_desc",
+      "path": "raw/static/emote_desc.json",
+      "bytes": 22816,
+      "sha256": "78bd70682a9fb898ca202b890e11f2d9278f801404513fdca38212a4c01b140e",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/emote_desc.json",
+      "rows": 71,
+      "fields": [
+        "allow_while_mounted",
+        "allow_while_moving",
+        "animation",
+        "command_line",
+        "duration",
+        "enabled_by_collectible_id",
+        "id",
+        "key_code",
+        "name",
+        "tool_mesh_index",
+        "tool_type"
+      ]
+    },
+    {
+      "table": "empire_color_desc",
+      "path": "raw/static/empire_color_desc.json",
+      "bytes": 5244,
+      "sha256": "0ccc93cebf055359225a8a274c46ddce6d3e3fcda18c6507ec9ac571dd217477",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/empire_color_desc.json",
+      "rows": 60,
+      "fields": [
+        "color2_argb",
+        "color_argb",
+        "id"
+      ]
+    },
+    {
+      "table": "empire_icon_desc",
+      "path": "raw/static/empire_icon_desc.json",
+      "bytes": 11670,
+      "sha256": "51f20c1b1057b6eff8095bff3e1775af289f8a4aa3973ab1fd094ab370208816",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/empire_icon_desc.json",
+      "rows": 140,
+      "fields": [
+        "icon_unicode",
+        "id",
+        "is_shape"
+      ]
+    },
+    {
+      "table": "empire_notification_desc",
+      "path": "raw/static/empire_notification_desc.json",
+      "bytes": 2285,
+      "sha256": "fbed4de4f074c8c409e14b8b0877975a557f5c56f65425ba93edca86ad0abee8",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/empire_notification_desc.json",
+      "rows": 14,
+      "fields": [
+        "id",
+        "notification_type",
+        "priority",
+        "show_on_login",
+        "text"
+      ]
+    },
+    {
+      "table": "empire_rank_desc",
+      "path": "raw/static/empire_rank_desc.json",
+      "bytes": 2357,
+      "sha256": "45a18006edd6134ff336d17783a68b164099f94066e42702c7b222cb922eb499",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/empire_rank_desc.json",
+      "rows": 10,
+      "fields": [
+        "max_count",
+        "permissions",
+        "rank",
+        "title"
+      ]
+    },
+    {
+      "table": "empire_supplies_desc",
+      "path": "raw/static/empire_supplies_desc.json",
+      "bytes": 55,
+      "sha256": "6ba81aa4658538c1d940a0b203970a88f02dc5b46ee08d054c29e2b2d1a49cf4",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/empire_supplies_desc.json",
+      "rows": 1,
+      "fields": [
+        "cargo_id",
+        "energy"
+      ]
+    },
+    {
+      "table": "empire_territory_desc",
+      "path": "raw/static/empire_territory_desc.json",
+      "bytes": 1895,
+      "sha256": "6b8ea60acb44720b83d0760f24ca60b2cd2b2468e0e11e12d4278ecbb8e3df9c",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/empire_territory_desc.json",
+      "rows": 11,
+      "fields": [
+        "chunks",
+        "crown_collectible_id",
+        "id",
+        "ranks"
+      ]
+    },
+    {
+      "table": "enemy_ai_params_desc",
+      "path": "raw/static/enemy_ai_params_desc.json",
+      "bytes": 44549,
+      "sha256": "3769657e81c32103ef5127421a3fc1261bb97ec8df5d4f6fc2e8cacd171e056f",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/enemy_ai_params_desc.json",
+      "rows": 141,
+      "fields": [
+        "avg_herd_size",
+        "biome",
+        "enemy_type",
+        "herds_per_chunk",
+        "id",
+        "roaming_distance",
+        "spawn_eagerness",
+        "spawn_frequency_minutes",
+        "time_of_day_end",
+        "time_of_day_start",
+        "var_herd_size"
+      ]
+    },
+    {
+      "table": "enemy_desc",
+      "path": "raw/static/enemy_desc.json",
+      "bytes": 93468,
+      "sha256": "6f4786119fb00d18250cc7a7a5dc38cabd3f91fa2410c8a76826fa9ff9505fbe",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/enemy_desc.json",
+      "rows": 60,
+      "fields": [
+        "accuracy",
+        "armor",
+        "attack_level",
+        "awareness_destination_threshold",
+        "combat_actions_ids",
+        "cooldown_multiplier",
+        "daytime_aggro_range",
+        "daytime_deaggro_range",
+        "daytime_detect_range",
+        "deaggro_health_threshold",
+        "defense_level",
+        "description",
+        "enemy_type",
+        "evade_range",
+        "evasion",
+        "experience_per_damage_dealt",
+        "extracted_item_stacks",
+        "health_regen_quantity",
+        "huntable",
+        "icon_address",
+        "ignore_damage",
+        "max_awareness_tick_sec",
+        "max_damage",
+        "max_health",
+        "max_speed",
+        "min_awareness_tick_sec",
+        "min_damage",
+        "min_speed",
+        "name",
+        "nighttime_aggro_range",
+        "nighttime_deaggro_range",
+        "nighttime_detect_range",
+        "pathfinding_id",
+        "prefab_address",
+        "radius",
+        "rarity",
+        "strength",
+        "tag",
+        "targeting_matrix_id",
+        "tier"
+      ]
+    },
+    {
+      "table": "enemy_scaling_desc",
+      "path": "raw/static/enemy_scaling_desc.json",
+      "bytes": 61917,
+      "sha256": "edb5ed563d37e5db9e1da2463dd4d450b912fe6dba8c8477e130ec28e903068e",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/enemy_scaling_desc.json",
+      "rows": 249,
+      "fields": [
+        "accuracy_bonus",
+        "enemy_type_id",
+        "evasion_bonus",
+        "id",
+        "max_damage_bonus",
+        "min_damage_bonus",
+        "required_players_count",
+        "scaled_armor_bonus",
+        "strength_bonus"
+      ]
+    },
+    {
+      "table": "environment_debuff_desc",
+      "path": "raw/static/environment_debuff_desc.json",
+      "bytes": 436,
+      "sha256": "63d76e461133fd8c163ac2c133b5f48eebda17337c0d26120c675f575cf6e80a",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/environment_debuff_desc.json",
+      "rows": 2,
+      "fields": [
+        "buff_id",
+        "ground_damage",
+        "resistance_level",
+        "resistance_met_text",
+        "resistance_type",
+        "resistance_unmet_text",
+        "water_damage"
+      ]
+    },
+    {
+      "table": "equipment_desc",
+      "path": "raw/static/equipment_desc.json",
+      "bytes": 1682142,
+      "sha256": "aedc52051a6ec411849b10c1781fa5de078a71356cad8ae33333c6b822b906fc",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/equipment_desc.json",
+      "rows": 2238,
+      "fields": [
+        "clothing_visual",
+        "equipment_buff_chance_per_hit",
+        "equipment_buff_id",
+        "equipment_buff_skill_id",
+        "hand_equipment_visual",
+        "item_id",
+        "level_requirement",
+        "required_achievements",
+        "required_knowledges",
+        "show_in_progression",
+        "slots",
+        "stats",
+        "visual_type"
+      ]
+    },
+    {
+      "table": "equipment_preset_knowledge_desc",
+      "path": "raw/static/equipment_preset_knowledge_desc.json",
+      "bytes": 196,
+      "sha256": "3bfd0f9bc4c2f51af4a73063917bdd8673c2326a6c174a7812a6d53793101488",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/equipment_preset_knowledge_desc.json",
+      "rows": 5,
+      "fields": [
+        "knowledge_id"
+      ]
+    },
+    {
+      "table": "extraction_recipe_desc",
+      "path": "raw/static/extraction_recipe_desc.json",
+      "bytes": 982617,
+      "sha256": "68118ceec1342a08caf5183c900b8f4123387e05f8b1b12a1a9e227b494a851c",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/extraction_recipe_desc.json",
+      "rows": 787,
+      "fields": [
+        "allow_use_hands",
+        "blocking_knowledges",
+        "cargo_id",
+        "consumed_item_stacks",
+        "discovery_triggers",
+        "empire_permission_required",
+        "empire_rank_requirement",
+        "experience_per_progress",
+        "extracted_item_stacks",
+        "id",
+        "level_requirements",
+        "range",
+        "recipe_performance_id",
+        "required_knowledges",
+        "resource_id",
+        "self_buffs",
+        "show_in_progression",
+        "spawned_placeables",
+        "stamina_requirement",
+        "time_requirement",
+        "tool_durability_lost",
+        "tool_mesh_index",
+        "tool_requirements",
+        "verb_phrase"
+      ]
+    },
+    {
+      "table": "floating_platform_desc",
+      "path": "raw/static/floating_platform_desc.json",
+      "bytes": 1191,
+      "sha256": "99fa5b275b71dffaf3c7ac613b517426a20fe24ae498ee3a6d2a53ca384f30c2",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/floating_platform_desc.json",
+      "rows": 3,
+      "fields": [
+        "allowed_biomes",
+        "building_id",
+        "max_per_player",
+        "max_water_depth",
+        "min_water_depth",
+        "supports_buildings",
+        "target_elevation",
+        "tier"
+      ]
+    },
+    {
+      "table": "food_desc",
+      "path": "raw/static/food_desc.json",
+      "bytes": 156928,
+      "sha256": "a6762afa7e9c40947a42bacb902459fdd4b765e91ec70cd82e1c42d7ffc731d5",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/food_desc.json",
+      "rows": 413,
+      "fields": [
+        "auto_consume",
+        "buffs",
+        "consumable_while_in_combat",
+        "hp",
+        "hunger",
+        "item_id",
+        "output_item_stacks",
+        "stamina",
+        "teleportation_energy",
+        "up_to_hp",
+        "up_to_stamina"
+      ]
+    },
+    {
+      "table": "furniture_emote_desc",
+      "path": "raw/static/furniture_emote_desc.json",
+      "bytes": 145,
+      "sha256": "655597663eb3cdba0fabf64f30d202f4d19a9c62317042a59b46e5c39a25b69f",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/furniture_emote_desc.json",
+      "rows": 1,
+      "fields": [
+        "action_name",
+        "emote_id",
+        "emote_location_object_name",
+        "furniture_type"
+      ]
+    },
+    {
+      "table": "gate_desc",
+      "path": "raw/static/gate_desc.json",
+      "bytes": 1956,
+      "sha256": "ca8e9de79fe2b736abd18f35b3a09480b343d3823ff07f41f5bbbd4deacc7133",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/gate_desc.json",
+      "rows": 19,
+      "fields": [
+        "building_id",
+        "small_post_asset_name"
+      ]
+    },
+    {
+      "table": "hexite_exchange_entry_desc",
+      "path": "raw/static/hexite_exchange_entry_desc.json",
+      "bytes": 1190,
+      "sha256": "3d82654488d442d1533c81ae393d085ef9923fb593dde375a6d36a9aa5272a71",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/hexite_exchange_entry_desc.json",
+      "rows": 6,
+      "fields": [
+        "base_shard_amount",
+        "event_name",
+        "id",
+        "image_address",
+        "name",
+        "price",
+        "shard_amount"
+      ]
+    },
+    {
+      "table": "interior_environment_desc",
+      "path": "raw/static/interior_environment_desc.json",
+      "bytes": 1116,
+      "sha256": "e5d0e51993037724b2b502762b76bc6507b659f26902afd9c1e27477d7382073",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_environment_desc.json",
+      "rows": 2,
+      "fields": [
+        "fog_color",
+        "fog_density",
+        "fog_enable",
+        "fog_end_distance",
+        "fog_mode",
+        "fog_start_distance",
+        "id",
+        "lighting_color_ambient_color",
+        "lighting_gradient_equator_color",
+        "lighting_gradient_ground_color",
+        "lighting_gradient_sky_color",
+        "lighting_skybox_intensity",
+        "lighting_source",
+        "name",
+        "realtime_shadow_color",
+        "skybox_material"
+      ]
+    },
+    {
+      "table": "interior_instance_desc",
+      "path": "raw/static/interior_instance_desc.json",
+      "bytes": 65808,
+      "sha256": "3d5e169a3681fc635a1be8a3f95fb848ccdae7e46760a162cbb9289804fe9e5f",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_instance_desc.json",
+      "rows": 145,
+      "fields": [
+        "biome",
+        "default_lighting",
+        "floor_material",
+        "generate_floor_mesh",
+        "generate_walls_mesh",
+        "id",
+        "interior_model",
+        "interior_shape_id",
+        "intertior_environment_id",
+        "max_angle",
+        "max_zoom",
+        "min_angle",
+        "min_zoom",
+        "rentable",
+        "tier",
+        "wall_material"
+      ]
+    },
+    {
+      "table": "interior_network_desc",
+      "path": "raw/static/interior_network_desc.json",
+      "bytes": 25004,
+      "sha256": "f8ec28c0a844d73216b705849a6ba2e925f5a4021e4a8ec653901eb57d95b2da",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_network_desc.json",
+      "rows": 94,
+      "fields": [
+        "building_id",
+        "child_interior_instances",
+        "destroy_building_on_collapse",
+        "dimension_type",
+        "respawn_time",
+        "start_collapsing",
+        "trigger_collapse_time"
+      ]
+    },
+    {
+      "table": "interior_portal_connections_desc",
+      "path": "raw/static/interior_portal_connections_desc.json",
+      "bytes": 41370,
+      "sha256": "24fae2522f3b455f90c3c0ab71cc7ded3de0f5c8ea481c560b0a5870ae862363",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_portal_connections_desc.json",
+      "rows": 291,
+      "fields": [
+        "entrance_portal_id",
+        "entrance_spawn_id",
+        "exit_portal_id",
+        "exit_spawn_id",
+        "id"
+      ]
+    },
+    {
+      "table": "interior_shape_desc",
+      "path": "raw/static/interior_shape_desc.json",
+      "bytes": 2542070,
+      "sha256": "c4ee724df03cb316f1a475439614ff69462bfae3566e1ec6ec58015c328b3cd2",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_shape_desc.json",
+      "rows": 89,
+      "fields": [
+        "footprint",
+        "id",
+        "min_x",
+        "min_z",
+        "size_x",
+        "size_z"
+      ]
+    },
+    {
+      "table": "interior_spawn_desc",
+      "path": "raw/static/interior_spawn_desc.json",
+      "bytes": 940900,
+      "sha256": "f61fcb441bd5a59941daee76a8c114925cfba90e8a873acf803dfb58f7f5899e",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_spawn_desc.json",
+      "rows": 1984,
+      "fields": [
+        "building_id",
+        "collapse_trigger",
+        "direction",
+        "enemy_type",
+        "id",
+        "interior_instance_id",
+        "interior_spawn_random_group_id",
+        "loot_chests",
+        "name",
+        "paving_id",
+        "resource_clump_id",
+        "respawn",
+        "spawn_type",
+        "spawn_x",
+        "spawn_z",
+        "traveler_ruin_entity_id",
+        "traveler_type"
+      ]
+    },
+    {
+      "table": "interior_spawn_destroy_trigger_desc",
+      "path": "raw/static/interior_spawn_destroy_trigger_desc.json",
+      "bytes": 3957,
+      "sha256": "b411a3f5ff715abf02ff6699bd231686c746722d4838a16bd94fc254423f436a",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_spawn_destroy_trigger_desc.json",
+      "rows": 12,
+      "fields": [
+        "destroyed_interior_spawn_ids",
+        "id",
+        "name",
+        "require_all_triggers",
+        "track_on_destroy_spawned_resources",
+        "trigger_interior_spawn_ids"
+      ]
+    },
+    {
+      "table": "interior_spawn_random_group_desc",
+      "path": "raw/static/interior_spawn_random_group_desc.json",
+      "bytes": 3444,
+      "sha256": "480bb3ac5949bc9db434e462cfb396f1ece6facd381d2fb0ff2244929eaebeec",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/interior_spawn_random_group_desc.json",
+      "rows": 21,
+      "fields": [
+        "id",
+        "name",
+        "resource_clump_ids"
+      ]
+    },
+    {
+      "table": "item_conversion_recipe_desc",
+      "path": "raw/static/item_conversion_recipe_desc.json",
+      "bytes": 1935198,
+      "sha256": "50561d6687b501b666416ce6d5caa1c9ad96c2321cd90084ec46be92a2573642",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/item_conversion_recipe_desc.json",
+      "rows": 3317,
+      "fields": [
+        "allow_use_hands",
+        "id",
+        "input_items",
+        "location_context",
+        "name",
+        "output_item",
+        "recipe_performance_id",
+        "required_equipment_id",
+        "required_equipment_tier",
+        "stamina_cost",
+        "string_context",
+        "time_cost"
+      ]
+    },
+    {
+      "table": "item_desc",
+      "path": "raw/static/item_desc.json",
+      "bytes": 3964783,
+      "sha256": "2cea4ddfd7230238ab5d6f59b3ba5502171174fb7ee1bac7904607dd5089f537",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/item_desc.json",
+      "rows": 8645,
+      "fields": [
+        "compendium_entry",
+        "convert_to_on_durability_zero",
+        "description",
+        "durability",
+        "icon_asset_name",
+        "id",
+        "item_list_id",
+        "model_asset_name",
+        "name",
+        "rarity",
+        "secondary_knowledge_id",
+        "tag",
+        "tier",
+        "volume"
+      ]
+    },
+    {
+      "table": "item_list_desc",
+      "path": "raw/static/item_list_desc.json",
+      "bytes": 1791817,
+      "sha256": "bbefe8ee5331b658a220a88601f727ce9ecd67fe77537a200f8ec217cc37de4a",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/item_list_desc.json",
+      "rows": 2537,
+      "fields": [
+        "id",
+        "name",
+        "possibilities"
+      ]
+    },
+    {
+      "table": "knowledge_scroll_desc",
+      "path": "raw/static/knowledge_scroll_desc.json",
+      "bytes": 169055,
+      "sha256": "1dc1cb8faf2e1bcbefb7fceaa30e2f1732396135f5edff0ad9d582c4629e57a8",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/knowledge_scroll_desc.json",
+      "rows": 441,
+      "fields": [
+        "auto_collect",
+        "content",
+        "item_id",
+        "known_by_default",
+        "scroll_type",
+        "secondary_knowledge_id",
+        "tag",
+        "title"
+      ]
+    },
+    {
+      "table": "knowledge_scroll_type_desc",
+      "path": "raw/static/knowledge_scroll_type_desc.json",
+      "bytes": 103,
+      "sha256": "2fa43765896834463086779c149ed06a6f11474aa4c53654dc3faed61ca30643",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/knowledge_scroll_type_desc.json",
+      "rows": 2,
+      "fields": [
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "knowledge_stat_modifier_desc",
+      "path": "raw/static/knowledge_stat_modifier_desc.json",
+      "bytes": 254924,
+      "sha256": "d610f8d836524af794cba07f2f1fecc3c23218ade041bbd6f8fe911e7a5cb887",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/knowledge_stat_modifier_desc.json",
+      "rows": 1507,
+      "fields": [
+        "secondary_knowledge_id",
+        "stats"
+      ]
+    },
+    {
+      "table": "loot_chest_desc",
+      "path": "raw/static/loot_chest_desc.json",
+      "bytes": 5923,
+      "sha256": "a9c253623f099df2d40385f6ebf39738b895db5a2af3c6d6ddf06975df2d709d",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/loot_chest_desc.json",
+      "rows": 22,
+      "fields": [
+        "chest_rarity",
+        "id",
+        "loot_tables",
+        "name",
+        "prefab_address"
+      ]
+    },
+    {
+      "table": "loot_rarity_desc",
+      "path": "raw/static/loot_rarity_desc.json",
+      "bytes": 1149,
+      "sha256": "7ac007bd8fd3bf2c5a71454b3d46001fd4e98c8c36a310ea93d586aa1a77025d",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/loot_rarity_desc.json",
+      "rows": 22,
+      "fields": [
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "loot_table_desc",
+      "path": "raw/static/loot_table_desc.json",
+      "bytes": 48788,
+      "sha256": "372648ac15c59a2de09500f47611ce155d0fdc1a74096723034a6932065d436c",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/loot_table_desc.json",
+      "rows": 103,
+      "fields": [
+        "id",
+        "loot_item_stacks",
+        "loot_rarity"
+      ]
+    },
+    {
+      "table": "npc_desc",
+      "path": "raw/static/npc_desc.json",
+      "bytes": 2048,
+      "sha256": "5a652b8ecfa82b042e11f2c12957ee9896c48129d7824b6d994e1d7ab56d4eac",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/npc_desc.json",
+      "rows": 7,
+      "fields": [
+        "force_market_mode",
+        "icon_address",
+        "max_time_at_ruin",
+        "min_time_at_ruin",
+        "name",
+        "npc_type",
+        "population",
+        "prefab_address",
+        "speed",
+        "task_skill_check"
+      ]
+    },
+    {
+      "table": "onboarding_reward_desc",
+      "path": "raw/static/onboarding_reward_desc.json",
+      "bytes": 1661,
+      "sha256": "46ce96b8bac671dd1998a907f546ce5deee5159ee824873bbf2836c2f9480c72",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/onboarding_reward_desc.json",
+      "rows": 9,
+      "fields": [
+        "item_stack_rewards",
+        "state_id"
+      ]
+    },
+    {
+      "table": "parameters_desc",
+      "path": "raw/static/parameters_desc.json",
+      "bytes": 5025,
+      "sha256": "05bd727ae7103985a8419b35f366cfb649d9c27d9597150a9fcda6b86001a1d6",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/parameters_desc.json",
+      "rows": 1,
+      "fields": [
+        "auto_respawn_attempts",
+        "building_decay_tick_millis",
+        "claim_stability_param_b",
+        "claim_stability_param_m",
+        "claim_totem_spacing",
+        "co_owner_take_ownership_supply_time",
+        "crafting_lock_duration_secs",
+        "daily_shards",
+        "daytime",
+        "deconstruct_default_time",
+        "default_num_inventory_pockets",
+        "default_num_toolbelt_pockets",
+        "default_speed",
+        "deployable_disembark_max_elevation",
+        "deposit_to_deployables_range",
+        "discovery_range",
+        "dropped_inventory_despawn_seconds",
+        "dropped_inventory_ownership_seconds",
+        "duel_out_of_range_grace_period_millis",
+        "duel_range",
+        "empire_decay_tick_millis",
+        "empire_default_nobility_threshold",
+        "empire_max_siege_distance",
+        "empire_min_siege_distance",
+        "empire_move_capital_currency_cost",
+        "empire_node_max_energy",
+        "empire_node_starting_energy",
+        "empire_rename_currency_cost",
+        "empire_shard_cost",
+        "empire_siege_delay_ticks",
+        "empire_siege_raise_pct",
+        "empire_siege_tick_millis",
+        "empire_starting_currency",
+        "empire_starting_shards",
+        "empire_watchtower_upkeep_per_chunk",
+        "empire_watchtower_upkeep_per_total_chunks",
+        "enemy_regen_tick_millis",
+        "environment_debuff_tick_millis",
+        "floating_origin_distance_threshold",
+        "floating_platform_region_edge_margin_chunks",
+        "hexite_capsule_craft_time_seconds",
+        "hexite_capsule_currency_cost",
+        "hexite_capsule_shard_cost",
+        "hexite_capsule_supply_cost",
+        "item_recovery_range",
+        "loot_chest_despawn_time_seconds",
+        "max_build_range",
+        "max_rental_deposit_days",
+        "max_trade_distance_large_tiles",
+        "max_traded_items",
+        "member_take_ownership_supply_time",
+        "min_distance_between_claims",
+        "min_distance_to_neutral_claims",
+        "min_seconds_to_passive_regen_health",
+        "min_seconds_to_passive_regen_stamina",
+        "nearby_flame_buff_id",
+        "new_user_aggro_immunity",
+        "nighttime",
+        "officer_take_ownership_supply_time",
+        "player_housing_eviction_time_minutes",
+        "player_housing_income_time_of_day",
+        "player_pathfinding_id",
+        "player_regen_tick_millis",
+        "prospecting_herd_immunity_secs",
+        "quick_board_range",
+        "recommended_achievements",
+        "region_crossover_distance_large_tiles",
+        "rent_collection_time_of_day",
+        "rent_deposit_days",
+        "rent_eviction_compensation",
+        "repair_building_duration",
+        "repair_building_max_repair_percent",
+        "repair_building_show_damage_percent",
+        "resource_growth_tick_rate_milliseconds",
+        "resources_regen_loops",
+        "resources_regen_tick_millis",
+        "respawn_aggro_immunity",
+        "respawn_seconds",
+        "rp_walk_speed",
+        "selected_traveler_order_count",
+        "show_shield_bar_percent",
+        "sign_in_aggro_immunity",
+        "starting_supplies",
+        "starving_damage",
+        "starving_tick_millis",
+        "swim_sprint_speed_multiplier",
+        "tech_time_log_base",
+        "tech_time_power_exponent",
+        "teleport_channel_time_home",
+        "teleport_channel_time_waystone",
+        "teleportation_base_energy_cost",
+        "teleportation_cost_per_large_tile",
+        "teleportation_energy_regen_tick_millis",
+        "teleportation_full_inventory_multiplier",
+        "teleportation_home_energy_cost",
+        "terraform_experience_per_progress",
+        "traveler_task_reroll_credit_cost",
+        "traveler_task_weekly_credits",
+        "traveler_tasks_per_npc",
+        "traveler_tasks_times_of_day",
+        "version",
+        "withdraw_from_deployables_range"
+      ]
+    },
+    {
+      "table": "pathfinding_desc",
+      "path": "raw/static/pathfinding_desc.json",
+      "bytes": 19587,
+      "sha256": "8d912a55f0dc7cfff5b20dc6239ff1ee89c2316e39f6b29a8847ddcacc287747",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/pathfinding_desc.json",
+      "rows": 40,
+      "fields": [
+        "avoid_light",
+        "can_swim",
+        "can_walk_on_land",
+        "climb_down_options",
+        "climb_up_options",
+        "id",
+        "max_swim_height_delta",
+        "max_water_depth",
+        "min_water_depth",
+        "requires_transitions"
+      ]
+    },
+    {
+      "table": "paving_tile_desc",
+      "path": "raw/static/paving_tile_desc.json",
+      "bytes": 108608,
+      "sha256": "9721907d6ebd6fa55da247aad281cd31c2dcb2867d3d822506e80980c08b47b6",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/paving_tile_desc.json",
+      "rows": 120,
+      "fields": [
+        "consumed_item_stacks",
+        "description",
+        "discovery_triggers",
+        "experience_per_progress",
+        "full_discovery_score",
+        "icon_address",
+        "id",
+        "input_cargo_discovery_score",
+        "input_cargo_id",
+        "name",
+        "paving_duration",
+        "prefab_address",
+        "required_knowledges",
+        "stat_effects",
+        "tier"
+      ]
+    },
+    {
+      "table": "pillar_shaping_desc",
+      "path": "raw/static/pillar_shaping_desc.json",
+      "bytes": 5523,
+      "sha256": "df15fd313da69d828c08dc4a5b7835e261716f98843e3de02ca8a8247e620677",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/pillar_shaping_desc.json",
+      "rows": 7,
+      "fields": [
+        "consumed_item_stacks",
+        "description",
+        "discovery_triggers",
+        "duration",
+        "experience_per_progress",
+        "full_discovery_score",
+        "icon_address",
+        "id",
+        "input_cargo_discovery_score",
+        "input_cargo_id",
+        "name",
+        "prefab_address",
+        "required_knowledges",
+        "tier"
+      ]
+    },
+    {
+      "table": "placeable_desc",
+      "path": "raw/static/placeable_desc.json",
+      "bytes": 371016,
+      "sha256": "be5606cb9ec831c4273278c0d9b34e74ff3ee7c41546ce4235a0e5b1a79d41e5",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/placeable_desc.json",
+      "rows": 631,
+      "fields": [
+        "description",
+        "enemy_params_id",
+        "icon_asset_name",
+        "id",
+        "land_elevation_max",
+        "land_elevation_min",
+        "max_health",
+        "model_asset_name",
+        "name",
+        "rarity",
+        "spawns_in_water",
+        "spawns_on_land",
+        "tag",
+        "tier",
+        "visible_to_others",
+        "water_depth_max",
+        "water_depth_min"
+      ]
+    },
+    {
+      "table": "placeable_group_desc",
+      "path": "raw/static/placeable_group_desc.json",
+      "bytes": 6420,
+      "sha256": "af00c77d78411a25943d8f68266b69b4a00a9e9daae5ab78dfdc5e8edd5a586f",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/placeable_group_desc.json",
+      "rows": 17,
+      "fields": [
+        "id",
+        "name",
+        "placeable_ids",
+        "placement_limit"
+      ]
+    },
+    {
+      "table": "placeable_growth_desc",
+      "path": "raw/static/placeable_growth_desc.json",
+      "bytes": 124952,
+      "sha256": "9c716886c15f81e7d23009576bfc10e6fbd00b8968a414add1c96e8fb3a48efa",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/placeable_growth_desc.json",
+      "rows": 396,
+      "fields": [
+        "id",
+        "outcomes",
+        "outcomes_v2",
+        "placeable_id",
+        "show_time_left",
+        "time"
+      ]
+    },
+    {
+      "table": "placeable_interaction_desc",
+      "path": "raw/static/placeable_interaction_desc.json",
+      "bytes": 612449,
+      "sha256": "05ffcfceadb20c576d2a25da1c87d136e044fa9d0002a92f0b20ccd4bfef9b5d",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/placeable_interaction_desc.json",
+      "rows": 535,
+      "fields": [
+        "allow_use_hands",
+        "blocking_knowledges",
+        "consumed_item_stacks",
+        "experience_per_progress",
+        "id",
+        "level_requirements",
+        "on_destroy_outcomes",
+        "on_destroy_spawned_placeable_chance",
+        "on_destroy_spawned_placeable_id",
+        "on_destroy_yield",
+        "output_item_stacks",
+        "placeable_id",
+        "power_multiplier",
+        "range",
+        "recipe_performance_id",
+        "required_knowledges",
+        "self_buffs",
+        "stamina_requirement",
+        "time_requirement",
+        "tool_durability_lost",
+        "tool_mesh_index",
+        "tool_requirements",
+        "verb_phrase"
+      ]
+    },
+    {
+      "table": "placeable_placement_desc",
+      "path": "raw/static/placeable_placement_desc.json",
+      "bytes": 135202,
+      "sha256": "06ec7e0bc18068c5b018961752a5b5d11b839ea9e1ebdb1813c43d661c5b169e",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/placeable_placement_desc.json",
+      "rows": 124,
+      "fields": [
+        "acceptable_pavements",
+        "blocking_knowledges",
+        "buildings",
+        "id",
+        "input_item",
+        "land_elevation_max",
+        "land_elevation_min",
+        "level_requirements",
+        "max_distance_to_buildings",
+        "min_distance_to_existing_footprints",
+        "min_distance_to_group",
+        "min_distance_to_other_placeables",
+        "min_distance_to_player_claims",
+        "place_on_land",
+        "place_on_water",
+        "placed_placeable_id",
+        "recipe_performance_id",
+        "required_biomes",
+        "required_claim_tier",
+        "required_interior_tier",
+        "required_knowledges",
+        "required_paving_tier",
+        "required_time",
+        "self_buffs",
+        "tool_requirements",
+        "water_depth_max",
+        "water_depth_min"
+      ]
+    },
+    {
+      "table": "player_action_desc",
+      "path": "raw/static/player_action_desc.json",
+      "bytes": 251,
+      "sha256": "ce9b5b914b234c51c0dd80ad25382a9d10b20e6ca2b359d784104def4c8275cc",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/player_action_desc.json",
+      "rows": 2,
+      "fields": [
+        "action_type_id",
+        "allowed_concurrent_action_ids",
+        "layer"
+      ]
+    },
+    {
+      "table": "player_housing_desc",
+      "path": "raw/static/player_housing_desc.json",
+      "bytes": 937,
+      "sha256": "2d9d52e05eb0cac6a00965a6b0ac2c73c9cd0da4b367ef98fb2ce94c90bf3138",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/player_housing_desc.json",
+      "rows": 7,
+      "fields": [
+        "name",
+        "rank",
+        "secondary_knowledge_id",
+        "template_building_id"
+      ]
+    },
+    {
+      "table": "premium_item_desc",
+      "path": "raw/static/premium_item_desc.json",
+      "bytes": 131015,
+      "sha256": "b6ad44c0db149deb53bb0ea856923a7fd4e68943023b4926bcd1055dfa4bebfa",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/premium_item_desc.json",
+      "rows": 235,
+      "fields": [
+        "base_price",
+        "collectible_ids",
+        "description",
+        "id",
+        "image_address",
+        "is_enabled",
+        "name",
+        "price",
+        "quantity",
+        "sorting_priority"
+      ]
+    },
+    {
+      "table": "premium_service_desc",
+      "path": "raw/static/premium_service_desc.json",
+      "bytes": 437,
+      "sha256": "a329793e23db8d9f46106cd12ca79827ad1bc209a8ac9ba8f177b791570d95be",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/premium_service_desc.json",
+      "rows": 1,
+      "fields": [
+        "base_price",
+        "description",
+        "id",
+        "image_address",
+        "is_enabled",
+        "name",
+        "price",
+        "service_type"
+      ]
+    },
+    {
+      "table": "prospecting_desc",
+      "path": "raw/static/prospecting_desc.json",
+      "bytes": 121917,
+      "sha256": "3374ec6b0d429c60c2bf2053b72ebe567e9884e7fb8b59ac2b90d7a9d4501740",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/prospecting_desc.json",
+      "rows": 73,
+      "fields": [
+        "allow_aquatic_bread_crumb",
+        "allow_aquatic_prospecting",
+        "biome_requirements",
+        "bread_crumb_count",
+        "bread_crumb_radius",
+        "breadcrumb_found_by_someone_else_message",
+        "breadcrumb_found_message",
+        "consumed_items_by_ability_trigger",
+        "contribution_per_visited_bread_crumb",
+        "deadzone_angle_between_crumbs",
+        "description",
+        "distance_between_bread_crumbs",
+        "enemy_ai_desc_id",
+        "equipment_requirements",
+        "experience_per_node",
+        "icon_asset_path",
+        "id",
+        "is_aquatic_resource",
+        "join_radius",
+        "name",
+        "pct_nodes_for_max_contribution",
+        "placeholder_resource_clump_id",
+        "pointer_duration",
+        "prospecting_duration",
+        "required_items_to_interact_with_reward",
+        "required_items_to_start",
+        "resource_clump_id",
+        "resource_uncovered_by_someone_else_message",
+        "resource_uncovered_message",
+        "single_contribution_only",
+        "step_item_stacks"
+      ]
+    },
+    {
+      "table": "quest_chain_desc",
+      "path": "raw/static/quest_chain_desc.json",
+      "bytes": 109834,
+      "sha256": "71cb82b3c6e3bd597f6aeb4f38a7ec73eea7ec379da8436f1e1b192fee3b3841",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/quest_chain_desc.json",
+      "rows": 141,
+      "fields": [
+        "id",
+        "implicit_rewards",
+        "is_hint",
+        "is_secret",
+        "name",
+        "recommended_priority",
+        "requirements",
+        "rewards",
+        "stages",
+        "unstartable"
+      ]
+    },
+    {
+      "table": "quest_drop_desc",
+      "path": "raw/static/quest_drop_desc.json",
+      "bytes": 9080,
+      "sha256": "33e5fa4f5584f9aff1b2214c055e12d4f1970e85bc7de98feee75123e4bb7a09",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/quest_drop_desc.json",
+      "rows": 25,
+      "fields": [
+        "enemy_id",
+        "extraction_id",
+        "id",
+        "item_drop",
+        "item_list_id",
+        "required_quest_id",
+        "required_stage_id"
+      ]
+    },
+    {
+      "table": "quest_stage_desc",
+      "path": "raw/static/quest_stage_desc.json",
+      "bytes": 179789,
+      "sha256": "cbddc1ab7f2d763c4f73500aca96cc0f49ac57da0492e67af427dff517e8e115",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/quest_stage_desc.json",
+      "rows": 807,
+      "fields": [
+        "chain_desc_id",
+        "completion_conditions",
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "reserved_name_desc",
+      "path": "raw/static/reserved_name_desc.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/reserved_name_desc.json",
+      "rows": 0,
+      "fields": []
+    },
+    {
+      "table": "resource_clump_desc",
+      "path": "raw/static/resource_clump_desc.json",
+      "bytes": 129659,
+      "sha256": "25502326a56f65c6572a64233bcb56279639caada21be5af53d1042cb6456a8d",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/resource_clump_desc.json",
+      "rows": 812,
+      "fields": [
+        "direction",
+        "id",
+        "resource_id",
+        "x",
+        "z"
+      ]
+    },
+    {
+      "table": "resource_desc",
+      "path": "raw/static/resource_desc.json",
+      "bytes": 1997277,
+      "sha256": "67ee4f86beb2d55d2ee74766fe05fd310da167c5d08d28ea3a9c13db53ce8cbe",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/resource_desc.json",
+      "rows": 878,
+      "fields": [
+        "compendium_entry",
+        "description",
+        "despawn_time",
+        "enemy_params_id",
+        "flattenable",
+        "footprint",
+        "icon_asset_name",
+        "id",
+        "ignore_damage",
+        "land_elevation_max",
+        "land_elevation_min",
+        "light_radius",
+        "max_elevation_delta",
+        "max_health",
+        "model_asset_name",
+        "name",
+        "not_respawning",
+        "on_destroy_building_outcomes",
+        "on_destroy_yield",
+        "on_destroy_yield_resource_chance",
+        "on_destroy_yield_resource_id",
+        "on_destroy_yield_resource_max_radius",
+        "on_destroy_yield_resource_min_radius",
+        "rarity",
+        "scheduled_respawn_time",
+        "show_time_left",
+        "spawn_priority",
+        "spawns_in_water",
+        "spawns_on_land",
+        "tag",
+        "tier",
+        "water_depth_max",
+        "water_depth_min"
+      ]
+    },
+    {
+      "table": "resource_growth_recipe_desc",
+      "path": "raw/static/resource_growth_recipe_desc.json",
+      "bytes": 57765,
+      "sha256": "e27ab8a929d29b6d8b8b43c8ca10cfd66d0ac1000addcb356d4dd52d02f3cc1b",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/resource_growth_recipe_desc.json",
+      "rows": 236,
+      "fields": [
+        "grown_resource_chance",
+        "grown_resource_id",
+        "grown_resource_max_radius",
+        "grown_resource_min_radius",
+        "id",
+        "resource_id",
+        "time"
+      ]
+    },
+    {
+      "table": "resource_placement_recipe_desc",
+      "path": "raw/static/resource_placement_recipe_desc.json",
+      "bytes": 8775,
+      "sha256": "5f25d6fc7d2bf2d95d5b42c66854a986ba31d670d69e316acce06449e757caa4",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/resource_placement_recipe_desc.json",
+      "rows": 8,
+      "fields": [
+        "actions_required",
+        "consumed_cargo_stacks",
+        "consumed_item_stacks",
+        "consumed_resource",
+        "discovery_triggers",
+        "experience_per_progress",
+        "full_discovery_score",
+        "id",
+        "level_requirements",
+        "name",
+        "recipe_performance_id",
+        "required_biomes",
+        "required_claim_tech_ids",
+        "required_interior_tier",
+        "required_knowledges",
+        "required_paving_tier",
+        "resource_description_id",
+        "stamina_requirement",
+        "time_requirement",
+        "tool_mesh_index",
+        "tool_requirements"
+      ]
+    },
+    {
+      "table": "secondary_knowledge_desc",
+      "path": "raw/static/secondary_knowledge_desc.json",
+      "bytes": 128846,
+      "sha256": "f2f8bf42bbecff8ed02bd90734128b73b438a8979db64f73b4b97c9299567997",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/secondary_knowledge_desc.json",
+      "rows": 1941,
+      "fields": [
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "skill_desc",
+      "path": "raw/static/skill_desc.json",
+      "bytes": 4105,
+      "sha256": "ec47d866cfbcbb7ea21e1e578e054154cf463f302de532af7de4c8769b33d766",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/skill_desc.json",
+      "rows": 20,
+      "fields": [
+        "description",
+        "icon_asset_name",
+        "id",
+        "max_level",
+        "name",
+        "skill_category",
+        "skill_type",
+        "title"
+      ]
+    },
+    {
+      "table": "skill_level_knowledge_desc",
+      "path": "raw/static/skill_level_knowledge_desc.json",
+      "bytes": 153422,
+      "sha256": "aa9a679ea7070b7fed28b5b7d1658a6e3d6a957bc6b7c992bec233a6ce32106e",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/skill_level_knowledge_desc.json",
+      "rows": 1428,
+      "fields": [
+        "id",
+        "level",
+        "secondary_knowledge_id",
+        "skill_id"
+      ]
+    },
+    {
+      "table": "stage_rewards_desc",
+      "path": "raw/static/stage_rewards_desc.json",
+      "bytes": 9174,
+      "sha256": "1d6735bf9b09bcd08113416376dc9f98a1c7b224f1cad04eefbd321962e2d5b1",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/stage_rewards_desc.json",
+      "rows": 43,
+      "fields": [
+        "chain_desc_id",
+        "id",
+        "rewards"
+      ]
+    },
+    {
+      "table": "targeting_matrix_desc",
+      "path": "raw/static/targeting_matrix_desc.json",
+      "bytes": 1008,
+      "sha256": "012b807df7ea209669eb8ab2dfc7ca356ba495a438c32cde1e98ad870235d930",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/targeting_matrix_desc.json",
+      "rows": 8,
+      "fields": [
+        "categories_attacked",
+        "categories_weights",
+        "id",
+        "interact"
+      ]
+    },
+    {
+      "table": "teleport_item_desc",
+      "path": "raw/static/teleport_item_desc.json",
+      "bytes": 78,
+      "sha256": "e8c92a1419d2f636506be069203d88a333c3b6ff69284ebdde3acb70449178d3",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/teleport_item_desc.json",
+      "rows": 1,
+      "fields": [
+        "buff_id",
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "terraform_recipe_desc",
+      "path": "raw/static/terraform_recipe_desc.json",
+      "bytes": 26300,
+      "sha256": "8a00e04148643cc4a07635884163b232547e94d4216820a513c315992f0f3fdc",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/terraform_recipe_desc.json",
+      "rows": 46,
+      "fields": [
+        "actions_count",
+        "difference",
+        "output_item_stacks",
+        "recipe_performance_id",
+        "stamina_per_action",
+        "time_per_action",
+        "tool_mesh_index",
+        "tool_requirement"
+      ]
+    },
+    {
+      "table": "tool_desc",
+      "path": "raw/static/tool_desc.json",
+      "bytes": 65033,
+      "sha256": "ef251752583ab30c269a554660302d09757309427c59d8cdf5eba59fe230c0f3",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/tool_desc.json",
+      "rows": 595,
+      "fields": [
+        "id",
+        "item_id",
+        "level",
+        "power",
+        "tool_type"
+      ]
+    },
+    {
+      "table": "tool_type_desc",
+      "path": "raw/static/tool_type_desc.json",
+      "bytes": 1005,
+      "sha256": "bacd4d75f03a962c3086a93197ef7bc593d02f613957bd0aee7d7f0307112e79",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/tool_type_desc.json",
+      "rows": 16,
+      "fields": [
+        "id",
+        "name",
+        "skill_id"
+      ]
+    },
+    {
+      "table": "traveler_task_desc",
+      "path": "raw/static/traveler_task_desc.json",
+      "bytes": 195109,
+      "sha256": "112ec9c767fb3c58754f0aa42633c36b150e53234f70d8ab68e8977a77988353",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/traveler_task_desc.json",
+      "rows": 321,
+      "fields": [
+        "description",
+        "id",
+        "level_requirement",
+        "required_items",
+        "rewarded_experience",
+        "rewarded_items"
+      ]
+    },
+    {
+      "table": "traveler_task_knowledge_requirement_desc",
+      "path": "raw/static/traveler_task_knowledge_requirement_desc.json",
+      "bytes": 44145,
+      "sha256": "159a00865df445863760d6a228bad781746194a85a6fa23566437f4c6dc50ab2",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/traveler_task_knowledge_requirement_desc.json",
+      "rows": 313,
+      "fields": [
+        "blocking_knowledges",
+        "required_knowledges",
+        "traveler_task_id"
+      ]
+    },
+    {
+      "table": "traveler_trade_order_desc",
+      "path": "raw/static/traveler_trade_order_desc.json",
+      "bytes": 178554,
+      "sha256": "429f19df36f3c37c065ed5e2fae5c983640bf5fab3d44ce103af38c776c97755",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/traveler_trade_order_desc.json",
+      "rows": 218,
+      "fields": [
+        "achievement_requirements",
+        "always_offered",
+        "blocking_knowledges",
+        "hide_if_requirements_are_not_met",
+        "hide_with_blocking_knowledges",
+        "hide_without_required_knowledge",
+        "id",
+        "level_requirements",
+        "offer_cargo_id",
+        "offer_items",
+        "required_cargo_id",
+        "required_items",
+        "required_knowledges",
+        "starting_stock",
+        "traveler"
+      ]
+    },
+    {
+      "table": "wall_desc",
+      "path": "raw/static/wall_desc.json",
+      "bytes": 7725,
+      "sha256": "23004eff86e5777e99b60d4a944dabd49e656eb4b70a322f11beaa86b25d1bf8",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/wall_desc.json",
+      "rows": 26,
+      "fields": [
+        "building_id",
+        "large_post_asset_name",
+        "small_post_asset_name",
+        "wall_asset_names"
+      ]
+    },
+    {
+      "table": "weapon_desc",
+      "path": "raw/static/weapon_desc.json",
+      "bytes": 58953,
+      "sha256": "1bbbcf64252a46eefca5cd3e0e23d106c035c690ef6ef4a12a37a7af713bea8c",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/weapon_desc.json",
+      "rows": 331,
+      "fields": [
+        "cooldown",
+        "item_id",
+        "max_damage",
+        "min_damage",
+        "stamina_use_multiplier",
+        "tier",
+        "weapon_type"
+      ]
+    },
+    {
+      "table": "weapon_type_desc",
+      "path": "raw/static/weapon_type_desc.json",
+      "bytes": 520,
+      "sha256": "474a25d892a58f0751e64382a209e3506fff86009dfc8ad754ef9b3463ceefe4",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/weapon_type_desc.json",
+      "rows": 7,
+      "fields": [
+        "hunting",
+        "id",
+        "name"
+      ]
+    },
+    {
+      "table": "wind_dbg_desc",
+      "path": "raw/static/wind_dbg_desc.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/wind_dbg_desc.json",
+      "rows": 0,
+      "fields": []
+    },
+    {
+      "table": "wind_params_desc",
+      "path": "raw/static/wind_params_desc.json",
+      "bytes": 292,
+      "sha256": "6849f877d4ec6198f33019849cccadca33d454014f7643f77851a8b881cd836d",
+      "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/static/wind_params_desc.json",
+      "rows": 3,
+      "fields": [
+        "cycle_sec",
+        "id",
+        "scale",
+        "weight"
+      ]
+    }
+  ],
+  "schema": {
+    "table": "region_schema",
+    "path": "raw/region_schema.json",
+    "bytes": 2093033,
+    "sha256": "afd409ba2252760b939bf2322ec6e048466d27fec2fefabadfffa0f21a4d99bd",
+    "sourceUrl": "https://raw.githubusercontent.com/BitCraftToolBox/BitCraft_GameData/af485cdbbb5cfaf9b6fd89742ecd7abac5009d3f/region_schema.json"
+  }
+}

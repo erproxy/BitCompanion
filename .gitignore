@@ -1,0 +1,21 @@
+/.idea/
+/node_modules/
+/dist-web/
+/dist-public/
+/output/
+/tmp/
+
+# Local reference materials and game media
+/data/bitcraft/raw/
+/data/bitcraft/icons/
+/web/assets/bitcraft/
+/web/data/recipe-catalog.json
+/web/data/catalog-ru.json
+/web/data/entity-images.js
+/docs/sources/
+/docs/design/
+
+.env
+.env.*
+.DS_Store
+Thumbs.db

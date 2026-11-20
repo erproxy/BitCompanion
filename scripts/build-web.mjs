@@ -1,0 +1,198 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import { brotliCompressSync, constants, gzipSync } from 'node:zlib';
+import { allowedBrowserPath, compressible, staticHostHeaders } from './web-headers.mjs';
+
+const here = fileURLToPath(import.meta.url);
+const defaultProjectRoot = path.resolve(path.dirname(here), '..');
+const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const catalogFiles = ['data/recipe-catalog.json', 'data/catalog-ru.json'];
+const noGameImages = Buffer.from('export const entityImageIndex = {"images":{}};\n');
+
+async function listFiles(directory, prefix = '') {
+  const files = [];
+  for (const entry of (await fs.readdir(directory, { withFileTypes: true })).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)) {
+    const relative = prefix + entry.name;
+    if (entry.isSymbolicLink()) throw new Error(`Web source cannot contain symbolic links: ${relative}`);
+    if (entry.isDirectory()) files.push(...await listFiles(path.join(directory, entry.name), relative + '/'));
+    else if (entry.isFile()) files.push(relative);
+  }
+  return files;
+}
+
+function inside(parent, target) {
+  const relative = path.relative(parent, target);
+  return relative && relative !== '..' && !relative.startsWith('..' + path.sep) && !path.isAbsolute(relative);
+}
+
+async function writeFile(filename, bytes, immutable = false, safeRoot) {
+  if (safeRoot) await rejectOutputLinks(safeRoot, path.dirname(filename));
+  await fs.mkdir(path.dirname(filename), { recursive: true });
+  try {
+    if ((await fs.lstat(filename)).isSymbolicLink()) throw new Error(`Web output cannot overwrite a symbolic link: ${filename}`);
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (immutable) {
+    try {
+      const previous = await fs.readFile(filename);
+      if (!previous.equals(Buffer.from(bytes))) throw new Error(`Refusing to change immutable web asset: ${filename}`);
+      return;
+    } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  }
+  if (immutable) return fs.writeFile(filename, bytes, { flag: 'wx' });
+  const temporary = filename + '.tmp-' + process.pid;
+  try {
+    await fs.writeFile(temporary, bytes, { flag: 'wx' });
+    await fs.rename(temporary, filename);
+  } finally { await fs.rm(temporary, { force: true }); }
+}
+
+function rootHtml(source, prefix) {
+  let html = source.replace(/\b(href|src)=(['"])([^'"<>]+)\2/g, (all, attribute, quote, value) => {
+    if (/^(?:[a-z]+:|\/|#)/i.test(value)) return all;
+    const relative = value.replace(/^\.\//, '');
+    if (relative.split('/').includes('..') || !allowedBrowserPath(relative)) throw new Error(`Unexpected HTML asset reference: ${value}`);
+    return `${attribute}=${quote}./${prefix}${relative}${quote}`;
+  });
+  if (!/<link\b[^>]*\brel=['"]manifest['"]/i.test(html))
+    html = html.replace('</head>', `  <link rel="manifest" href="./${prefix}manifest.webmanifest">\n</head>`);
+  return html;
+}
+
+function presetImageFiles(sources) {
+  const module = sources.get('entity-images.js')?.toString() || '';
+  const declaration = module.match(/export const DROP_ENTITY_KEYS\s*=\s*Object\.freeze\(\{([\s\S]*?)\}\)/)?.[1];
+  const indexSource = sources.get('data/entity-images.js')?.toString() || '';
+  if (!declaration || !indexSource) return [];
+  const json = indexSource.match(/export const entityImageIndex\s*=\s*([\s\S]*?);?\s*$/)?.[1]?.replace(/;$/, '');
+  if (!json) throw new Error('Cannot read generated image index for offline preset icons.');
+  const index = JSON.parse(json);
+  const keys = [...declaration.matchAll(/['"]item:\d+['"]/g)].map(match => match[0].slice(1, -1));
+  return [...new Set(keys.map(key => index.images?.[key]?.file).filter(Boolean).map(file => 'assets/bitcraft/' + file))].sort();
+}
+
+function compactImageIndex(bytes) {
+  const json = bytes.toString().match(/export const entityImageIndex\s*=\s*([\s\S]*?);?\s*$/)?.[1]?.replace(/;$/, '');
+  if (!json) throw new Error('Cannot read generated entity image index.');
+  const index = JSON.parse(json);
+  if (!index.images || typeof index.images !== 'object') throw new Error('Image bindings are missing from generated index.');
+  return Buffer.from('// Runtime projection; integrity metadata remains in the source package.\nexport const entityImageIndex=' + JSON.stringify({ images: index.images }) + ';\n');
+}
+
+async function rejectOutputLinks(projectRoot, outputRoot) {
+  let current = projectRoot;
+  for (const segment of path.relative(projectRoot, outputRoot).split(path.sep)) {
+    current = path.join(current, segment);
+    try {
+      const stat = await fs.lstat(current);
+      if (stat.isSymbolicLink() || !stat.isDirectory()) throw new Error(`Web output path is not an ordinary directory: ${current}`);
+    } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  }
+}
+
+async function verifyPublicOutput(projectRoot, outputRoot) {
+  const releases = path.join(outputRoot, 'releases');
+  await rejectOutputLinks(projectRoot, releases);
+  let versions;
+  try { versions = await fs.readdir(releases); }
+  catch (error) { if (error.code === 'ENOENT') return; throw error; }
+  for (const version of versions) {
+    const directory = path.join(releases, version);
+    await rejectOutputLinks(projectRoot, directory);
+    const manifest = JSON.parse(await fs.readFile(path.join(directory, 'asset-manifest.json'), 'utf8'));
+    if (manifest.publicData !== true) throw new Error('Public output contains a local release. Choose a separate output directory.');
+  }
+}
+
+export async function buildWeb({ projectRoot = defaultProjectRoot, sourceRoot = path.join(projectRoot, 'web'), publicBuild = false,
+  outputRoot = path.join(projectRoot, publicBuild ? 'dist-public' : 'dist-web') } = {}) {
+  projectRoot = path.resolve(projectRoot); sourceRoot = path.resolve(sourceRoot); outputRoot = path.resolve(outputRoot);
+  const sourceNames = await listFiles(sourceRoot);
+  const publicData = publicBuild || !catalogFiles.every(name => sourceNames.includes(name));
+  if (!inside(projectRoot, outputRoot) || outputRoot === sourceRoot || inside(sourceRoot, outputRoot) || inside(outputRoot, sourceRoot))
+    throw new Error('Web output must be a separate project subdirectory outside the web source directory.');
+  await rejectOutputLinks(projectRoot, outputRoot);
+  try {
+    const existing = await fs.readdir(outputRoot);
+    if (existing.some(name => !['releases', 'index.html', 'sw.js', 'release.json', '_headers'].includes(name) && !/^(?:index\.html|sw\.js|release\.json)\.(?:gz|br)$/.test(name)))
+      throw new Error('Web output contains unrelated files; choose an empty directory or an existing web build.');
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (publicData) await verifyPublicOutput(projectRoot, outputRoot);
+  for (const name of sourceNames) if (name !== 'sw.js' && !allowedBrowserPath(name)) throw new Error(`Unexpected file in web source: ${name}`);
+  for (const required of ['index.html', 'app.js', 'runtime-config.js', 'styles.css', 'icon.svg', 'manifest.webmanifest', 'sw.js'])
+    if (!sourceNames.includes(required)) throw new Error(`Missing web source: ${required}`);
+  const sources = new Map();
+  for (const name of sourceNames) {
+    if (publicData && (catalogFiles.includes(name) || name === 'data/entity-images.js' || name.startsWith('assets/bitcraft/'))) continue;
+    sources.set(name, await fs.readFile(path.join(sourceRoot, name)));
+  }
+  if (publicData) for (const name of catalogFiles) {
+    sources.set(name, await fs.readFile(path.join(projectRoot, 'data/public', path.basename(name))));
+  }
+  if (!sources.has('data/entity-images.js')) sources.set('data/entity-images.js', noGameImages);
+  const packageInfo = JSON.parse(await fs.readFile(path.join(projectRoot, 'package.json'), 'utf8'));
+  const files = new Map(sources); files.delete('sw.js');
+  if (files.has('data/entity-images.js')) files.set('data/entity-images.js', compactImageIndex(files.get('data/entity-images.js')));
+  const manifest = JSON.parse(files.get('manifest.webmanifest').toString());
+  manifest.id = '../../'; manifest.start_url = '../../'; manifest.scope = '../../';
+  files.set('manifest.webmanifest', Buffer.from(JSON.stringify(manifest, null, 2) + '\n'));
+  const contentHash = createHash('sha256').update('bitcraft-static-release-v1\0').update(packageInfo.version).update('\0');
+  // The generator participates in the ID: changing generated HTML/config also changes its immutable URL.
+  contentHash.update(await fs.readFile(here));
+  // Hash the browser projection, including the reduced image index, rather than its private source metadata.
+  for (const [name, bytes] of files) contentHash.update('\0' + name + '\0' + bytes.length + '\0').update(bytes);
+  contentHash.update('\0sw.js\0').update(sources.get('sw.js'));
+  const release = contentHash.digest('hex').slice(0, 24);
+  const releaseBase = `releases/${release}/`;
+  files.set('runtime-config.js', Buffer.from(`// Generated web release configuration.\nexport const runtimeConfig=Object.freeze({release:${JSON.stringify(release)},assetBase:new URL('./',import.meta.url).href});\nexport const appBase=new URL('../../',import.meta.url).href;\nexport const assetUrl=path=>new URL(path,runtimeConfig.assetBase).href;\n`));
+  const html = rootHtml(files.get('index.html').toString(), releaseBase);
+  files.set('shell.html', Buffer.from(html));
+  const presets = new Set(presetImageFiles(sources));
+  for (const name of presets) if (!files.has(name)) throw new Error(`Missing offline preset image: ${name}`);
+  const core = [...files.keys()].filter(name => name !== 'index.html' && (!/\.(?:webp|jpe?g)$/.test(name) || presets.has(name))).sort().map(name => releaseBase + name);
+  const imageFiles = [...files.keys()].filter(name => /\.webp$/.test(name)).sort().map(name => releaseBase + name);
+  const assets = [];
+  const write = async (relative, bytes, immutable = false) => {
+    await writeFile(path.join(outputRoot, relative), bytes, immutable, projectRoot);
+    if (compressible(relative) && bytes.length >= 512) {
+      const compressed = {
+        gz: gzipSync(bytes, { level: 9 }),
+        br: brotliCompressSync(bytes, { params: { [constants.BROTLI_PARAM_QUALITY]: 5 } })
+      };
+      for (const [extension, packed] of Object.entries(compressed)) {
+        if (packed.length < bytes.length) await writeFile(path.join(outputRoot, relative + '.' + extension), packed, immutable, projectRoot);
+        else if (!immutable) await fs.rm(path.join(outputRoot, relative + '.' + extension), { force: true });
+      }
+    } else if (!immutable && compressible(relative)) {
+      for (const extension of ['gz', 'br']) await fs.rm(path.join(outputRoot, relative + '.' + extension), { force: true });
+    }
+  };
+  for (const [name, bytes] of [...files].sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)) {
+    await write(releaseBase + name, bytes, true);
+    assets.push({ path: name, bytes: bytes.length, sha256: hash(bytes) });
+  }
+  const releaseManifest = { formatVersion: 1, version: packageInfo.version, release, releaseBase, publicData, files: assets };
+  await writeFile(path.join(outputRoot, releaseBase, 'asset-manifest.json'), JSON.stringify(releaseManifest, null, 2) + '\n', true, projectRoot);
+  const sw = Buffer.from(`// Generated release constants. URLs are relative to the service worker scope.\nconst RELEASE=${JSON.stringify(release)};\nconst RELEASE_BASE=${JSON.stringify(releaseBase)};\nconst CORE=${JSON.stringify(core)};\nconst IMAGE_FILES=${JSON.stringify(imageFiles)};\n` + sources.get('sw.js').toString());
+  // Immutable release resources are complete before the mutable entry points change.
+  await write('index.html', Buffer.from(html));
+  await write('sw.js', sw);
+  const metadata = { ...releaseManifest, core, imageFiles };
+  await write('release.json', Buffer.from(JSON.stringify(metadata, null, 2) + '\n'));
+  await writeFile(path.join(outputRoot, '_headers'), staticHostHeaders(), false, projectRoot);
+  return { ...metadata, outputRoot };
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === here) {
+  try {
+    let outputRoot, publicBuild = false;
+    for (let i = 2; i < process.argv.length; i++) {
+      if (process.argv[i] === '--output' && process.argv[i + 1]) outputRoot = path.resolve(process.argv[++i]);
+      else if (process.argv[i] === '--public') publicBuild = true;
+      else throw new Error(`Unknown argument: ${process.argv[i]}`);
+    }
+    const result = await buildWeb({ outputRoot, publicBuild });
+    console.log(`Built web release ${result.release}: ${result.files.length} files in ${result.outputRoot}`);
+  } catch (error) { console.error(error.message); process.exitCode = 1; }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "bitcraft-companion",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static BitCraft Online website with offline support",
+  "scripts": {
+    "test": "node --test tests/domain.test.mjs tests/recipe-domain.test.mjs tests/resource-domain.test.mjs tests/dungeon-domain.test.mjs tests/localization.test.mjs tests/navigation.test.mjs tests/state-storage.test.mjs tests/web-build.test.mjs",
+    "test:full": "node --test tests/*.test.mjs",
+    "data:verify": "node scripts/verify-bitcraft-data.mjs",
+    "data:catalog": "node scripts/build-recipe-catalog.mjs",
+    "data:catalog:check": "node scripts/build-recipe-catalog.mjs --check",
+    "data:icons:verify": "node scripts/verify-bitcraft-icons.mjs",
+    "data:images": "node scripts/build-entity-images.mjs",
+    "data:images:check": "node scripts/build-entity-images.mjs --check",
+    "test:recipes-ui": "node tests/recipes-ui.cjs",
+    "test:resources-ui": "node tests/resources-ui.cjs",
+    "test:buildings-ui": "node tests/buildings-ui.cjs",
+    "web:build": "node scripts/build-web.mjs",
+    "web:dev": "node scripts/serve-web.mjs --dev",
+    "web:preview": "node scripts/serve-web.mjs",
+    "test:web-build": "node --test tests/web-build.test.mjs",
+    "test:web": "node scripts/test-web.mjs",
+    "test:web-ui": "node tests/web-ui.cjs",
+    "test:web-offline": "node tests/web-offline.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
